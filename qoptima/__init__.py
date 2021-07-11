@@ -1,1 +1,1 @@
-import qoptima.qaoa
+import qoptima.circuits
