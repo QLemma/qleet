@@ -46,5 +46,13 @@ class LossLandscapePlotter:
             scan_range = np.linspace(-distance, +distance, points)
             fig = pg.Figure(data=pg.Contour(z=data, x=scan_range, y=scan_range))
             fig.show()
+        elif mode == 'surface':
+            assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
+            origin = self.solver.model.trainable_variables[0]
+            data, _coords = self.scan(points, distance, origin)
+            data = np.reshape(data, (points, points))
+            scan_range = np.linspace(-distance, +distance, points)
+            fig = pg.Figure(data=pg.Surface(z=data, x=scan_range, y=scan_range))
+            fig.show()
         else:
             raise NotImplementedError("This plotting mode has not been implemented yet")

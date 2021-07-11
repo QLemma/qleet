@@ -88,7 +88,7 @@ class QAOAMaxCutSolver:
     def compute_cost(self, params, samples=1000):
         samples = self.sample_solutions(params, samples)
         cut_sizes = [nx.algorithms.cuts.cut_size(self.graph, np.where(cut)[0]) for cut in samples]
-        return np.max(cut_sizes)  # TODO: Should we use max here, or mean, or swap this out with the cost function?
+        return np.mean(cut_sizes)  # TODO: Should we use max here, or mean, or swap this out with the cost function?
 
     def draw_circuit(self):
         print(self.circuit)
