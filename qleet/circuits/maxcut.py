@@ -94,7 +94,7 @@ class QAOAMaxCutSolver:
         print(self.circuit)
 
 
-def train(qaoa, epochs=100):
+def train(qaoa, epochs=100, logger=None):
     loss_history = []
     with tqdm.trange(epochs) as iterator:
         iterator.set_description("QAOA Optimization Loop")
@@ -106,6 +106,8 @@ def train(qaoa, epochs=100):
             error = error.numpy()[0][0]
             loss_history.append(error)
             iterator.set_postfix(error=error)
+            if logger is not None:
+                logger.log(qaoa, error)
     return qaoa, loss_history
 
 
