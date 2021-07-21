@@ -1,3 +1,5 @@
+from abc import abstractmethod, ABC
+
 from typing_extensions import final
 import numpy as np
 import tqdm.auto as tqdm
@@ -5,21 +7,41 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 
 import plotly.express as px
+import plotly.graph_objects as pg
 
 from ..circuits.maxcut import QAOAMaxCutSolver
+from ..plotter.landscape import LossLandscapePlotter
 
 
-class OptimizationPathPlotter:
+class MetaLogger(ABC):
 
-    def __init__(self, mode="tSNE"):
-        assert mode in ["tSNE", "PCA"], "Mode of Dimentionality Reduction is not implemented, use PCA or tSNE."
+    def __init__(self):
         self.trial, self.counter = 0, 0
         self.data = []
         self.runs = []
         self.item = []
+
+    @abstractmethod
+    def log(self, solver, loss):
+        raise NotImplementedError
+
+    @abstractmethod
+    def plot(self):
+        raise NotImplementedError
+
+    def next(self):
+        self.trial += 1
+        self.counter = 0
+
+
+class OptimizationPathPlotter(MetaLogger):
+
+    def __init__(self, mode = "tSNE"):
+        super().__init__()
+        assert mode in ["tSNE", "PCA"], "Mode of Dimentionality Reduction is not implemented, use PCA or tSNE."
         self.dimentionality_reduction = TSNE if mode == "tSNE" else PCA
 
-    def log(self, solver: QAOAMaxCutSolver, loss):
+    def log(self, solver: QAOAMaxCutSolver, _loss):
         self.data.append(solver.model.trainable_variables[0].numpy())
         self.runs.append(self.trial)
         self.item.append(self.counter)
@@ -31,8 +53,30 @@ class OptimizationPathPlotter:
         max_number_of_runs = max(self.item)
         size_values = [5 if size > max_number_of_runs - 5 else 1 for size in self.item]
         fig = px.scatter(x=final_params[:, 0], y=final_params[:, 1], color=self.runs, size=size_values)
-        fig.show()
+        return fig
 
-    def next(self):
-        self.trial += 1
-        self.counter = 0
+
+class LossLandscapePathPlotter(MetaLogger):
+
+    def __init__(self, base_plotter: LossLandscapePlotter):
+        super().__init__()
+        self.loss = []
+        self.plotter = base_plotter
+
+    def log(self, solver: QAOAMaxCutSolver, loss: float):
+        self.data.append(self.plotter.axes @ solver.model.trainable_variables[0].numpy())
+        self.loss.append(loss)
+        self.runs.append(self.trial)
+        self.item.append(self.counter)
+        self.counter += 1
+
+    def plot(self):
+        self.data = np.array(self.data)
+        self.loss = np.array(self.loss)
+        max_number_of_runs = max(self.item)
+        size_values = np.array([12 if size > max_number_of_runs - 5 else 5 for size in self.item])
+        fig = pg.Figure(data=[
+            pg.Scatter3d(x = self.data[:, 0], y = self.data[:, 1], z = -self.loss, mode='markers', 
+            marker = dict(color=self.runs, size=size_values))
+        ])
+        return fig

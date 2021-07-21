@@ -36,7 +36,7 @@ class LossLandscapePlotter:
                 values[i] = self.solver.compute_cost(coords[i] @ self.axes + origin)
         return values, coords
 
-    def plot(self, mode, points=25, distance=np.pi):
+    def plot(self, mode="surface", points=25, distance=np.pi):
         assert mode in ['line', 'contour', 'surface']
         if mode == 'contour':
             assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
@@ -45,7 +45,7 @@ class LossLandscapePlotter:
             data = np.reshape(data, (points, points))
             scan_range = np.linspace(-distance, +distance, points)
             fig = pg.Figure(data=pg.Contour(z=data, x=scan_range, y=scan_range))
-            fig.show()
+            return fig
         elif mode == 'surface':
             assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
             origin = self.solver.model.trainable_variables[0]
@@ -53,6 +53,6 @@ class LossLandscapePlotter:
             data = np.reshape(data, (points, points))
             scan_range = np.linspace(-distance, +distance, points)
             fig = pg.Figure(data=pg.Surface(z=data, x=scan_range, y=scan_range))
-            fig.show()
+            return fig
         else:
             raise NotImplementedError("This plotting mode has not been implemented yet")
