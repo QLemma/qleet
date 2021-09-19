@@ -1,4 +1,4 @@
 cirq==0.11.0
-tensorflow_quantum==0.5.1
-tensorflow==2.4.1
+tensorflow_quantum==0.6.0
+tensorflow==2.5.1
 qiskit==0.26.2
