@@ -13,7 +13,6 @@ import tensorflow_quantum as tfq
 
 
 class QAOAMaxCutSolver:
-
     def __init__(self, graph: nx.Graph, p=8):
         self.p = p
         self.graph = graph
@@ -25,11 +24,14 @@ class QAOAMaxCutSolver:
 
         self.cost_fn = self.__make_output_cost()
         self.optimizer = tf.keras.optimizers.Adam(lr=0.01)
-        self.model = tf.keras.models.Sequential([
-            tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
-            tfq.layers.PQC(self.circuit, self.cost_fn,
-                           differentiator=tfq.differentiators.Adjoint())
-        ])
+        self.model = tf.keras.models.Sequential(
+            [
+                tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
+                tfq.layers.PQC(
+                    self.circuit, self.cost_fn, differentiator=tfq.differentiators.Adjoint()
+                ),
+            ]
+        )
 
     def __len__(self):
         return len(self.params)
@@ -58,7 +60,8 @@ class QAOAMaxCutSolver:
         cost = 0
         for edge in self.graph.edges():
             cost += cirq.PauliString(
-                1 / 2 * cirq.Z(self.qubits[edge[0]]) * cirq.Z(self.qubits[edge[1]]))
+                1 / 2 * cirq.Z(self.qubits[edge[0]]) * cirq.Z(self.qubits[edge[1]])
+            )
         return cost
 
     def solve_classically(self):
@@ -67,8 +70,12 @@ class QAOAMaxCutSolver:
         :return: Value of the max the cut
         """
         subsets_list = itertools.chain.from_iterable(
-            itertools.combinations(self.graph.nodes(), r) for r in range(self.graph.number_of_nodes() + 1))
-        max_cut = [nx.algorithms.cuts.cut_size(self.graph, assignment) for assignment in subsets_list]
+            itertools.combinations(self.graph.nodes(), r)
+            for r in range(self.graph.number_of_nodes() + 1)
+        )
+        max_cut = [
+            nx.algorithms.cuts.cut_size(self.graph, assignment) for assignment in subsets_list
+        ]
         return np.max(max_cut)
 
     def sample_solutions(self, parameters=None, samples=1000):
@@ -81,14 +88,20 @@ class QAOAMaxCutSolver:
         if parameters is None:
             parameters = self.model.trainable_variables[0]
         sample_circuit = tfq.layers.AddCircuit()(self.initial_state, append=self.circuit)
-        output = tfq.layers.Sample()(sample_circuit, symbol_names=self.params,
-                                     symbol_values=[parameters], repetitions=samples)
+        output = tfq.layers.Sample()(
+            sample_circuit,
+            symbol_names=self.params,
+            symbol_values=[parameters],
+            repetitions=samples,
+        )
         return output.numpy()[0]
 
     def compute_cost(self, params, samples=1000):
         samples = self.sample_solutions(params, samples)
         cut_sizes = [nx.algorithms.cuts.cut_size(self.graph, np.where(cut)[0]) for cut in samples]
-        return np.mean(cut_sizes)  # TODO: Should we use max here, or mean, or swap this out with the cost function?
+        return np.mean(
+            cut_sizes
+        )  # TODO: Should we use max here, or mean, or swap this out with the cost function?
 
     def draw_circuit(self):
         print(self.circuit)
@@ -115,7 +128,9 @@ def train(qaoa, epochs=100, loggers=None):
 def evaluate(qaoa: QAOAMaxCutSolver):
     samples = qaoa.sample_solutions()
     # subsets_as_integers = [int("".join(assignment), 2) for assignment in samples.astype(str)]
-    cut_sizes = [nx.algorithms.cuts.cut_size(qaoa_instance.graph, np.where(cut)[0]) for cut in samples]
+    cut_sizes = [
+        nx.algorithms.cuts.cut_size(qaoa_instance.graph, np.where(cut)[0]) for cut in samples
+    ]
     return np.mean(cut_sizes), np.max(cut_sizes)
 
 

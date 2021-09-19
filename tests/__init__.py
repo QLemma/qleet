@@ -15,6 +15,7 @@ try:
 except AttributeError:
     INTERACTIVE = True
 
+
 def cli():
-    """ qLEET test command line interface """
+    """qLEET test command line interface"""
     return

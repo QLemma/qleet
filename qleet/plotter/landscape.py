@@ -7,7 +7,6 @@ from ..circuits.maxcut import QAOAMaxCutSolver
 
 
 class LossLandscapePlotter:
-
     def __init__(self, solver, dim=2):
         self.n = len(solver)
         self.solver: QAOAMaxCutSolver = solver
@@ -37,8 +36,8 @@ class LossLandscapePlotter:
         return values, coords
 
     def plot(self, mode="surface", points=25, distance=np.pi):
-        assert mode in ['line', 'contour', 'surface']
-        if mode == 'contour':
+        assert mode in ["line", "contour", "surface"]
+        if mode == "contour":
             assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
             origin = self.solver.model.trainable_variables[0]
             data, _coords = self.scan(points, distance, origin)
@@ -46,7 +45,7 @@ class LossLandscapePlotter:
             scan_range = np.linspace(-distance, +distance, points)
             fig = pg.Figure(data=pg.Contour(z=data, x=scan_range, y=scan_range))
             return fig
-        elif mode == 'surface':
+        elif mode == "surface":
             assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
             origin = self.solver.model.trainable_variables[0]
             data, _coords = self.scan(points, distance, origin)
