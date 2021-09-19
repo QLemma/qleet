@@ -9,13 +9,13 @@ from .plotter.landscape import LossLandscapePlotter
 from .plotter.training import OptimizationPathPlotter, LossLandscapePathPlotter
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     graph = nx.gnm_random_graph(n=10, m=40)
 
     qaoa = QAOAMaxCutSolver(graph, p=1)
     plot = LossLandscapePlotter(qaoa, dim=2)
     train(qaoa, epochs=5000)
-    fig_loss_surface = plot.plot('surface', points=25)
+    fig_loss_surface = plot.plot("surface", points=25)
 
     tracker_loss = LossLandscapePathPlotter(plot)
     tracker_path = OptimizationPathPlotter(mode="tSNE")
@@ -29,7 +29,10 @@ if __name__ == '__main__':
 
     # Make the app to plot all of this
 
-    external_stylesheets = ["https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css", "./app.css"]
+    external_stylesheets = [
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css",
+        "./app.css",
+    ]
     app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
     fig_loss_surface.layout.update(
@@ -45,26 +48,20 @@ if __name__ == '__main__':
         className="container",
         id="mainApp",
         children=[
-            dash_html.H1(children='Variational Quantum Circuit Analyzer'),
-            dash_html.H3(children='Visualizing QAOA Landscapes and Plotting Paths.'),
-
-            dash_html.H2(children='tSNE of Optimization Path'),
+            dash_html.H1(children="Variational Quantum Circuit Analyzer"),
+            dash_html.H3(children="Visualizing QAOA Landscapes and Plotting Paths."),
+            dash_html.H2(children="tSNE of Optimization Path"),
+            dash_core.Graph(id="training-path", figure=fig_training_trace),
+            dash_html.H2(children="Loss Landscape along random 2-D subspace"),
             dash_core.Graph(
-                id='training-path',
-                figure=fig_training_trace
-            ),
-
-            dash_html.H2(children='Loss Landscape along random 2-D subspace'),
-            dash_core.Graph(
-                id='loss-landscape',
+                id="loss-landscape",
                 figure=fig_loss_surface,
             ),
-
-            dash_html.H2(children='Traversal on the Loss Landscape above'),
+            dash_html.H2(children="Traversal on the Loss Landscape above"),
             dash_core.Graph(
-                id='loss-traversal',
+                id="loss-traversal",
                 figure=fig_loss_traversal,
-            )
-        ]
+            ),
+        ],
     )
     app.run_server(debug=False)
