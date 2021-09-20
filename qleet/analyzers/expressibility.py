@@ -79,9 +79,11 @@ class Expressibility:
                 "value"
             ]
         else:
-            circuit.snapshot('final', snapshot_type='statevector')
-            result = execute(circuit, Aer.get_backend('aer_simulator_statevector')).result()
-            result_data = result.data(0)['snapshots']['statevector']['final'][0]
+            circuit.snapshot("final", snapshot_type="statevector")
+            result = execute(
+                circuit, Aer.get_backend("aer_simulator_statevector")
+            ).result()
+            result_data = result.data(0)["snapshots"]["statevector"]["final"][0]
         return result_data
 
     def prob_haar(self):
