@@ -5,7 +5,7 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, dev, proto/**, dev/** ]
   pull_request:
     branches: [ master ]
 

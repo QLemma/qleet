@@ -1,22 +1,28 @@
 import itertools
+import typing
+
 import numpy as np
+
 from qiskit import execute, Aer
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.quantum_info import partial_trace
 from scipy.special import comb
 
+
 class EntanglementCapability:
-    """ Calculates entangling capability of a parameterized quantum circuit """
+    """
+    Calculates entangling capability of a parameterized quantum circuit
+    """
+
     def __init__(self, circuit, circuit_params, noise_model = None, samples = 1000):
         """
-        Args:
-            circuit (template(uparams, cparams, **kwargs)): circuit template with arguments
-            for parameterized single-qubit gates and two-qubit gates parameters.
-            circuit_params (list[tuples]): [(layers, num_qubits, single-qubit operations),
-            (layers, num_qubits, two-qubit operations)] list of shapes of the parameter
-            object in the circuit (unitary and controlled layer).
-            initilization noise_model (dict, NoiseModel): dictionary for generating noise model
-            samples (int): number of samples for the experiment
+        :param circuit (template(uparams, cparams, **kwargs)): circuit template with arguments
+        for parameterized single-qubit gates and two-qubit gates parameters.
+        :param circuit_params (list[tuples]): [(layers, num_qubits, single-qubit operations),
+        (layers, num_qubits, two-qubit operations)] list of shapes of the parameter
+        object in the circuit (unitary and controlled layer).
+        :param initialization noise_model (dict, NoiseModel): dictionary for generating noise model
+        :param samples (int): number of samples for the experiment
 
         Returns:
             Expressibility object instance
