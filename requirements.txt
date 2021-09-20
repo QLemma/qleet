@@ -15,3 +15,4 @@ tqdm>=4.36.1
 wandb>=0.10.33
 pylint==2.4.4
 yapf==0.28.0
+pyquil>=3.0.0
