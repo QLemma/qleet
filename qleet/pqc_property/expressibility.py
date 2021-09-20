@@ -77,8 +77,9 @@ class Expressibility:
             ).result()
             result_data = result.data(0)["snapshots"]["density_matrix"]["final"][0]["value"]
         else:
-            result = execute(circuit, Aer.get_backend("statevector_simulator")).result()
-            result_data = result.get_statevector(circuit, decimals=5)
+            circuit.snapshot('final', snapshot_type='statevector')
+            result = execute(circuit, Aer.get_backend('aer_simulator_statevector')).result()
+            result_data = result.data(0)['snapshots']['statevector']['final'][0]
         return result_data
 
     def prob_haar(self):
