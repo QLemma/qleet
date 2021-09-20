@@ -3,3 +3,5 @@ sympy
 tensorflow_quantum
 tensorflow
 qiskit
+plotly
+matplotlib

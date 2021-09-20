@@ -5,7 +5,7 @@ from qiskit.providers.aer.noise import NoiseModel
 from qiskit.quantum_info import partial_trace
 from scipy.special import comb
 
-class EntanglingCapability:
+class EntanglementCapability:
     """ Calculates entangling capability of a parameterized quantum circuit """
     def __init__(self, circuit, circuit_params, noise_model = None, samples = 1000):
         """
@@ -65,22 +65,25 @@ class EntanglingCapability:
         """
             Returns the meyer-wallach entanglement measure for the given circuit.
 
-            r"$$ Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}\Bigg(1-
-                        \frac{1}{n}\sum_{k=1}^{n}Tr(\rho_{k}^{2}(\theta_{i}))\Bigg)$$ "
+            .. math::
+            Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}\Bigg(1-
+                \frac{1}{n}\sum_{k=1}^{n}Tr(\rho_{k}^{2}(\theta_{i}))\Bigg)
 
         """
         permutations = list(itertools.combinations(range(num_qubits), num_qubits-1))
-        ns = 2 * sum([1 - self.scott_helper(st, permutations)/num_qubits for st in states])
+        ns = 2 * sum([1 - 1/num_qubits*self.scott_helper(st, permutations) for st in states])
+        print(permutations)
         return ns.real
 
     def scott_measure(self, states, num_qubits):
         """
             Returns the scott entanglement measure for the given circuit.
 
-            r"$$ Q = \frac{1}{\lfloor N/2 \rfloor} \sum_{m=1}^{\lfloor N/2 \rfloor} Q_{m} \Rightarrow
-                     \frac{1}{\lfloor N/2 \rfloor |\vec{\theta}|} \sum_{m=1}^{\lfloor N/2 \rfloor}
-                     \frac{2^{m}}{2^{m}-1} \sum_{\theta_{i}\in \vec{\theta}}\Bigg( 1 -
-                     \frac{m! (N-m)!}{N!} \sum_{|S|=m} Tr(\rho_{S}^{2}(\theta_{i}))  \Bigg) $$"
+            .. math::
+            Q = \frac{1}{\lfloor N/2 \rfloor} \sum_{m=1}^{\lfloor N/2 \rfloor} Q_{m} \Rightarrow
+                \frac{1}{\lfloor N/2 \rfloor |\vec{\theta}|} \sum_{m=1}^{\lfloor N/2 \rfloor}
+                \frac{2^{m}}{2^{m}-1} \sum_{\theta_{i}\in \vec{\theta}}\Bigg( 1 -
+                \frac{m! (N-m)!}{N!} \sum_{|S|=m} Tr(\rho_{S}^{2}(\theta_{i}))  \Bigg)
         """
         m = range(1, num_qubits//2 + 1)
         permutations = [list(itertools.combinations(range(num_qubits), num_qubits-idx)) for idx in m]
@@ -91,21 +94,22 @@ class EntanglingCapability:
         for ind, perm in enumerate(permutations):
             ns.append(contri[ind] * sum([1 - combs[ind]*self.scott_helper(st, perm) for st in states]))
 
-        return ns
+        return np.array(ns)
 
     def circuit_ouput(self, circuit, shots=1024):
         """ Returns output for the given circuit """
         if self.noise_model is not None:
             circuit.snapshot('final', snapshot_type='density_matrix')
-            result = execute(circuit, Aer.get_backend('qasm_simulator'), shots=shots,
-            noise_model = self.noise_model, backend_options = {"method": "density_matrix"}).result()
+            result = execute(circuit, Aer.get_backend('aer_simulator_density_matrix'), shots=shots,
+            noise_model = self.noise_model).result()
             result_data = result.data(0)['snapshots']['density_matrix']['final'][0]['value']
         else:
-            result = execute(circuit, Aer.get_backend('statevector_simulator')).result()
-            result_data = result.get_statevector(circuit, decimals=5)
+            circuit.snapshot('final', snapshot_type='statevector')
+            result = execute(circuit, Aer.get_backend('aer_simulator_statevector')).result()
+            result_data = result.data(0)['snapshots']['statevector']['final'][0]
         return result_data
 
-    def entangling_capability(self, measure: str = "meyer-wallach", shots: int = 1024) -> float:
+    def entanglement_capability(self, measure: str = "meyer-wallach", shots: int = 1024) -> float:
         """ Returns entanglement measure for the given circuit
         Args:
             measure (str): specification for the measure used in the entangling capability
@@ -131,10 +135,10 @@ class EntanglingCapability:
         num_qubits = self.param_shape[0][1]
 
         if measure == "meyer-wallach":
-            pqc_entangling_capability = self.meyer_wallach_measure(th_circ+ph_circ,
+            pqc_entanglement_capability = self.meyer_wallach_measure(th_circ+ph_circ,
                                                             num_qubits)/(2*self.num_samples)
         elif measure == "scott":
-            pqc_entangling_capability = self.scott_measure(th_circ+ph_circ,
+            pqc_entanglement_capability = self.scott_measure(th_circ+ph_circ,
                                                             num_qubits)/(2*self.num_samples)
 
-        return pqc_entangling_capability
+        return pqc_entanglement_capability

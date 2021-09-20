@@ -24,8 +24,7 @@ info = {
                 'qleet-test=qleet.tests:cli'
             ]
         },
-    'description': 'qLEET is an open-source library for exploring Loss landscape, Expressibility,\
-        Entangling capability and Training trajectories of noisy parameterized quantum circuits.',
+    'description': 'qLEET is an open-source library for exploring Loss landscape, Expressibility, Entangling capability and Training trajectories of noisy parameterized quantum circuits.',
     'long_description': open('README.md').read(),
     'long_description_content_type': "text/markdown",
     'provides': ["qleet"],
