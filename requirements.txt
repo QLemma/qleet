@@ -1,7 +1,9 @@
 cirq
-sympy
-tensorflow_quantum
+tensorflow-quantum
 tensorflow
 qiskit
 plotly
 matplotlib
+scipy
+numpy
+sympy
