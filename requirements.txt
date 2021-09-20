@@ -9,7 +9,6 @@ plotly==5.1.0
 pygame==2.0.1
 qiskit==0.24.1
 scikit-learn==0.24.2
-scipy==1.7.0
 seaborn==0.11.1
 sympy==1.8
 tensorboard==2.5.0
