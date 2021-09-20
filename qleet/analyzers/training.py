@@ -1,8 +1,7 @@
+import typing
 from abc import abstractmethod, ABC
 
-from typing_extensions import final
 import numpy as np
-import tqdm.auto as tqdm
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 
@@ -10,7 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as pg
 
 from ..circuits.maxcut import QAOAMaxCutSolver
-from ..plotter.landscape import LossLandscapePlotter
+from ..analyzers.landscape import LossLandscapePlotter
 
 
 class MetaLogger(ABC):
@@ -50,11 +49,16 @@ class OptimizationPathPlotter(MetaLogger):
 
     def plot(self):
         raw_params = np.stack(self.data)
-        final_params = self.dimentionality_reduction(n_components=2).fit_transform(raw_params)
+        final_params = self.dimentionality_reduction(n_components=2).fit_transform(
+            raw_params
+        )
         max_number_of_runs = max(self.item)
         size_values = [5 if size > max_number_of_runs - 5 else 1 for size in self.item]
         fig = px.scatter(
-            x=final_params[:, 0], y=final_params[:, 1], color=self.runs, size=size_values
+            x=final_params[:, 0],
+            y=final_params[:, 1],
+            color=self.runs,
+            size=size_values,
         )
         return fig
 
@@ -62,27 +66,31 @@ class OptimizationPathPlotter(MetaLogger):
 class LossLandscapePathPlotter(MetaLogger):
     def __init__(self, base_plotter: LossLandscapePlotter):
         super().__init__()
-        self.loss = []
+        self.loss: typing.List[float] = []
         self.plotter = base_plotter
 
     def log(self, solver: QAOAMaxCutSolver, loss: float):
-        self.data.append(self.plotter.axes @ solver.model.trainable_variables[0].numpy())
+        self.data.append(
+            self.plotter.axes @ solver.model.trainable_variables[0].numpy()
+        )
         self.loss.append(loss)
         self.runs.append(self.trial)
         self.item.append(self.counter)
         self.counter += 1
 
     def plot(self):
-        self.data = np.array(self.data)
-        self.loss = np.array(self.loss)
+        data = np.array(self.data)
+        loss = np.array(self.loss)
         max_number_of_runs = max(self.item)
-        size_values = np.array([12 if size > max_number_of_runs - 5 else 5 for size in self.item])
+        size_values = np.array(
+            [12 if size > max_number_of_runs - 5 else 5 for size in self.item]
+        )
         fig = pg.Figure(
             data=[
                 pg.Scatter3d(
-                    x=self.data[:, 0],
-                    y=self.data[:, 1],
-                    z=-self.loss,
+                    x=data[:, 0],
+                    y=data[:, 1],
+                    z=-loss,
                     mode="markers",
                     marker=dict(color=self.runs, size=size_values),
                 )

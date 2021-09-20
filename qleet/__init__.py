@@ -1,3 +1,6 @@
+"""
+The qLEET Package for visualizing quantum circuit behavior
+"""
+
 import qleet.circuits
-import qleet.plotter
-import qleet.pqc_property
+import qleet.analyzers

@@ -75,11 +75,15 @@ class Expressibility:
                 noise_model=self.noise_model,
                 backend_options={"method": "density_matrix"},
             ).result()
-            result_data = result.data(0)["snapshots"]["density_matrix"]["final"][0]["value"]
+            result_data = result.data(0)["snapshots"]["density_matrix"]["final"][0][
+                "value"
+            ]
         else:
-            circuit.snapshot('final', snapshot_type='statevector')
-            result = execute(circuit, Aer.get_backend('aer_simulator_statevector')).result()
-            result_data = result.data(0)['snapshots']['statevector']['final'][0]
+            circuit.snapshot("final", snapshot_type="statevector")
+            result = execute(
+                circuit, Aer.get_backend("aer_simulator_statevector")
+            ).result()
+            result_data = result.data(0)["snapshots"]["statevector"]["final"][0]
         return result_data
 
     def prob_haar(self):
@@ -112,7 +116,10 @@ class Expressibility:
             for ph, cph in zip(phi, cphi)
         ]
         fidelity = np.array(
-            [state_fidelity(rhoa, rhob) for rhoa, rhob in itertools.product(th_circ, ph_circ)]
+            [
+                state_fidelity(rhoa, rhob)
+                for rhoa, rhob in itertools.product(th_circ, ph_circ)
+            ]
         )
         return np.array(fidelity)
 
@@ -129,7 +136,9 @@ class Expressibility:
         haar_prob = haar / float(haar.sum())
 
         fidelity = self.prob_pqc(shots)
-        pqc_hist, bin_edges = np.histogram(fidelity, self.num_samples, range=(0, 1), density=True)
+        pqc_hist, bin_edges = np.histogram(
+            fidelity, self.num_samples, range=(0, 1), density=True
+        )
         pqc_prob = pqc_hist / float(pqc_hist.sum())
 
         if measure == "kld":

@@ -15,7 +15,7 @@ class LossLandscapePlotter:
 
     def __random_subspace(self, dim):
         axes = []
-        for i in range(dim):
+        for _i in range(dim):
             axis = np.random.random(self.n)
             for other_axis in axes:
                 projection = np.dot(axis, other_axis)
@@ -25,7 +25,9 @@ class LossLandscapePlotter:
         return np.stack(axes, axis=0)
 
     def scan(self, points, distance, origin):
-        chained_range = [np.linspace(-distance, distance, points) for i in range(self.dim)]
+        chained_range = [
+            np.linspace(-distance, distance, points) for i in range(self.dim)
+        ]
         coords = np.meshgrid(*chained_range)
         coords = np.reshape(np.stack(coords, axis=-1), (-1, self.dim))
         values = np.zeros(len(coords), dtype=np.float)
@@ -38,7 +40,9 @@ class LossLandscapePlotter:
     def plot(self, mode="surface", points=25, distance=np.pi):
         assert mode in ["line", "contour", "surface"]
         if mode == "contour":
-            assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
+            assert (
+                self.dim == 2
+            ), "Contour plots can only be drawn with 2-dimensional axes"
             origin = self.solver.model.trainable_variables[0]
             data, _coords = self.scan(points, distance, origin)
             data = np.reshape(data, (points, points))
@@ -46,7 +50,9 @@ class LossLandscapePlotter:
             fig = pg.Figure(data=pg.Contour(z=data, x=scan_range, y=scan_range))
             return fig
         elif mode == "surface":
-            assert self.dim == 2, "Contour plots can only be drawn with 2-dimensional axes"
+            assert (
+                self.dim == 2
+            ), "Contour plots can only be drawn with 2-dimensional axes"
             origin = self.solver.model.trainable_variables[0]
             data, _coords = self.scan(points, distance, origin)
             data = np.reshape(data, (points, points))
