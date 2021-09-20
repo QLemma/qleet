@@ -16,7 +16,9 @@ class QAOAMaxCutSolver:
     def __init__(self, graph: nx.Graph, p=8):
         self.p = p
         self.graph = graph
-        self.qubits = [cirq.GridQubit(0, i) for i in range(self.graph.number_of_nodes())]
+        self.qubits = [
+            cirq.GridQubit(0, i) for i in range(self.graph.number_of_nodes())
+        ]
         self.params = sympy.symbols("q0:%d" % (2 * p))
 
         self.circuit = self.__make_circuit()
@@ -28,7 +30,9 @@ class QAOAMaxCutSolver:
             [
                 tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
                 tfq.layers.PQC(
-                    self.circuit, self.cost_fn, differentiator=tfq.differentiators.Adjoint()
+                    self.circuit,
+                    self.cost_fn,
+                    differentiator=tfq.differentiators.Adjoint(),
                 ),
             ]
         )
@@ -74,7 +78,8 @@ class QAOAMaxCutSolver:
             for r in range(self.graph.number_of_nodes() + 1)
         )
         max_cut = [
-            nx.algorithms.cuts.cut_size(self.graph, assignment) for assignment in subsets_list
+            nx.algorithms.cuts.cut_size(self.graph, assignment)
+            for assignment in subsets_list
         ]
         return np.max(max_cut)
 
@@ -87,7 +92,9 @@ class QAOAMaxCutSolver:
         """
         if parameters is None:
             parameters = self.model.trainable_variables[0]
-        sample_circuit = tfq.layers.AddCircuit()(self.initial_state, append=self.circuit)
+        sample_circuit = tfq.layers.AddCircuit()(
+            self.initial_state, append=self.circuit
+        )
         output = tfq.layers.Sample()(
             sample_circuit,
             symbol_names=self.params,
@@ -98,7 +105,9 @@ class QAOAMaxCutSolver:
 
     def compute_cost(self, params, samples=1000):
         samples = self.sample_solutions(params, samples)
-        cut_sizes = [nx.algorithms.cuts.cut_size(self.graph, np.where(cut)[0]) for cut in samples]
+        cut_sizes = [
+            nx.algorithms.cuts.cut_size(self.graph, np.where(cut)[0]) for cut in samples
+        ]
         return np.mean(
             cut_sizes
         )  # TODO: Should we use max here, or mean, or swap this out with the cost function?
@@ -129,7 +138,8 @@ def evaluate(qaoa: QAOAMaxCutSolver):
     samples = qaoa.sample_solutions()
     # subsets_as_integers = [int("".join(assignment), 2) for assignment in samples.astype(str)]
     cut_sizes = [
-        nx.algorithms.cuts.cut_size(qaoa_instance.graph, np.where(cut)[0]) for cut in samples
+        nx.algorithms.cuts.cut_size(qaoa_instance.graph, np.where(cut)[0])
+        for cut in samples
     ]
     return np.mean(cut_sizes), np.max(cut_sizes)
 

@@ -11,8 +11,9 @@ from cirq.contrib.qasm_import import circuit_from_qasm
 from cirq.contrib.quil_import import circuit_from_quil
 
 
-def convert_to_cirq(circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]) -> \
-        cirq.Circuit:
+def convert_to_cirq(
+    circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]
+) -> cirq.Circuit:
     """
     Converts any circuit to cirq
     :param circuit: input circuit in any framework
@@ -23,13 +24,16 @@ def convert_to_cirq(circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, p
     elif isinstance(circuit, qiskit.QuantumCircuit):
         return circuit_from_qasm(circuit.qasm())
     elif isinstance(circuit, pyquil.Program):
-        raise circuit_from_quil(str(circuit))
+        return circuit_from_quil(str(circuit))
     else:
-        raise ValueError(f'Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}')
+        raise ValueError(
+            f"Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}"
+        )
 
 
-def convert_to_qiskit(circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]) -> \
-        qiskit.QuantumCircuit:
+def convert_to_qiskit(
+    circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]
+) -> qiskit.QuantumCircuit:
     """
     Converts any circuit to qiskit
     :param circuit: input circuit in any framework
@@ -42,7 +46,9 @@ def convert_to_qiskit(circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit,
     elif isinstance(circuit, pyquil.Program):
         raise convert_to_qiskit(convert_to_cirq(circuit))
     else:
-        raise ValueError(f'Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}')
+        raise ValueError(
+            f"Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}"
+        )
 
 
 class CircuitDescriptor:
@@ -50,10 +56,12 @@ class CircuitDescriptor:
     The interface for users to provide a circuit in any framework and visualize it in qLEET.
     """
 
-    def __init__(self,
-                 circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program],
-                 params: typing.List[sympy.Symbol],
-                 cost_function: typing.Callable[[np.ndarray], float]):
+    def __init__(
+        self,
+        circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program],
+        params: typing.List[sympy.Symbol],
+        cost_function: typing.Callable[[np.ndarray], float],
+    ):
         self._circuit = circuit
         self._params = params
         self._cost = cost_function
@@ -67,7 +75,9 @@ class CircuitDescriptor:
         :return: The CircuitDescriptor object
         """
         cirq_circuit = circuit_from_qasm(qasm_str)
-        return CircuitDescriptor(circuit=cirq_circuit, params=params, cost_function=cost_function)
+        return CircuitDescriptor(
+            circuit=cirq_circuit, params=params, cost_function=cost_function
+        )
 
     @property
     def parameters(self) -> typing.List[sympy.Symbol]:
@@ -112,7 +122,10 @@ class CircuitDescriptor:
 
     def __eq__(self, other: typing.Any) -> bool:
         if isinstance(other, CircuitDescriptor):
-            return np.array_equal(self.parameters, other.parameters) and self.cirq_circuit == other.cirq_circuit
+            return (
+                np.array_equal(self.parameters, other.parameters)
+                and self.cirq_circuit == other.cirq_circuit
+            )
         else:
             return False
 

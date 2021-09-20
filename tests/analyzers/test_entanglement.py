@@ -35,7 +35,7 @@ def generate_circuit_2(params, _c_params=None):
         for ind in range(num_qubits):
             ansatz.rx(params[idx][ind][0], ind)
             ansatz.rz(params[idx][ind][1], ind)
-        indexes = [[i, i-1] for i in reversed(range(1, num_qubits))]
+        indexes = [[i, i - 1] for i in reversed(range(1, num_qubits))]
         for ind in indexes:
             ansatz.cx(ind[0], ind[1])
 
@@ -45,9 +45,9 @@ def generate_circuit_2(params, _c_params=None):
 @pytest.mark.xfail
 @pytest.mark.parametrize("circuit", [generate_circuit_1, generate_circuit_2])
 def test_entanglement_circuits(circuit):
-    """ Tests that the entanglement measures give correct output """
+    """Tests that the entanglement measures give correct output"""
     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
-    res1, res2 = 0., 0.
+    res1, res2 = 0.0, 0.0
     for measure in ["meyer-wallach", "scott"]:
         ent_res = ent_circ.entanglement_capability(measure)
         if not isinstance(ent_res, np.ndarray):
@@ -62,7 +62,7 @@ def test_entanglement_circuits(circuit):
 @pytest.mark.parametrize("circuit", [generate_circuit_1])
 @pytest.mark.parametrize("measure", ["meyer-wallach", "scott"])
 def test_entanglement_measures(circuit, measure):
-    """ Tests that the entanglement measures give correct output """
+    """Tests that the entanglement measures give correct output"""
     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
     ent_res = ent_circ.entanglement_capability(measure)
     if not isinstance(ent_res, np.ndarray):
