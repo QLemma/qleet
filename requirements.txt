@@ -1,7 +1,7 @@
-cirq==0.11.0
-tensorflow-quantum>=0.5.1
-tensorflow>=2.4.1
-qiskit==0.26.2
+cirq
+tensorflow-quantum
+tensorflow
+qiskit
 plotly
 matplotlib
 scipy
