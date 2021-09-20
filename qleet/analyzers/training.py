@@ -1,8 +1,6 @@
 from abc import abstractmethod, ABC
 
-from typing_extensions import final
 import numpy as np
-import tqdm.auto as tqdm
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 
@@ -10,7 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as pg
 
 from ..circuits.maxcut import QAOAMaxCutSolver
-from ..plotter.landscape import LossLandscapePlotter
+from ..analyzers.landscape import LossLandscapePlotter
 
 
 class MetaLogger(ABC):
