@@ -1,7 +1,9 @@
-cirq
-sympy
-tensorflow_quantum
-tensorflow
-qiskit
-plotly
-matplotlib
+cirq==0.11.0
+sympy==1.5
+tensorflow-quantum==0.5.1
+tensorflow==2.4.1
+qiskit==0.26.2
+plotly==5.3.1
+matplotlib==3.4.3
+scipy==1.7.1
+numpy==1.19.5
