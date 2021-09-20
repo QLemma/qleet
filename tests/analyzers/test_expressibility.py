@@ -6,7 +6,7 @@ from qiskit import QuantumCircuit
 from qleet.analyzers.expressibility import Expressibility
 
 
-def generate_ansatz_1(params: np.ndarray[float], _c_params=None):
+def generate_ansatz_1(params: np.ndarray, _c_params=None):
     """
     Generate an templated ansatz with given parameters
     :param params: Parameters to initialize the parameterized unitary.
@@ -23,7 +23,7 @@ def generate_ansatz_1(params: np.ndarray[float], _c_params=None):
     return ansatz
 
 
-def generate_ansatz_2(params: np.ndarray[float], _c_params=None):
+def generate_ansatz_2(params: np.ndarray, _c_params=None):
     """
     Generate an templated ansatz with given parameters
     Args:
