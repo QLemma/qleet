@@ -16,9 +16,7 @@ class QAOAMaxCutSolver:
     def __init__(self, graph: nx.Graph, p=8):
         self.p = p
         self.graph = graph
-        self.qubits = [
-            cirq.GridQubit(0, i) for i in range(self.graph.number_of_nodes())
-        ]
+        self.qubits = cirq.LineQubit.range(self.graph.number_of_nodes())
         self.params = sympy.symbols("q0:%d" % (2 * p))
 
         self.circuit = self.__make_circuit()

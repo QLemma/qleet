@@ -60,7 +60,7 @@ class CircuitDescriptor:
         self,
         circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program],
         params: typing.List[sympy.Symbol],
-        cost_function: typing.Callable[[np.ndarray], float],
+        cost_function: float,
     ):
         self._circuit = circuit
         self._params = params
@@ -72,6 +72,7 @@ class CircuitDescriptor:
         Generate the descriptor from QASM string
         :param qasm_str: 3-tuple of QASM strings for each part of the circuit
         :param params: list of sympy symbols which act as parameters
+        :param cost_function:
         :return: The CircuitDescriptor object
         """
         cirq_circuit = circuit_from_qasm(qasm_str)

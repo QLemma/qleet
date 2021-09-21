@@ -144,7 +144,6 @@ class EntanglementCapability:
         Returns:
             pqc_entangling_capability (float): entanglement measure value
         """
-
         thetas, phis = self.gen_params(self.num_samples, self.param_shape)
         theta, phi = thetas[0], phis[0]
         try:
@@ -171,5 +170,9 @@ class EntanglementCapability:
             pqc_entanglement_capability = self.scott_measure(
                 th_circ + ph_circ, num_qubits
             ) / (2 * self.num_samples)
+        else:
+            raise ValueError(
+                "Invalid measure provided, choose from 'meyer-wallach' or 'scott'"
+            )
 
         return pqc_entanglement_capability
