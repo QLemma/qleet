@@ -19,7 +19,7 @@ def test_cirq_simulator_state_vector():
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
-    simulator = qleet.simulators.state_simulators.StateSimulator(cirq_descriptor)
+    simulator = qleet.simulators.circuit_simulators.CircuitSimulator(cirq_descriptor)
     state_vector = simulator.simulate(params)
     assert isinstance(state_vector, np.ndarray), "State vector should be a numpy array"
     assert (
@@ -40,7 +40,7 @@ def test_cirq_simulator_density_matrix():
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
-    simulator = qleet.simulators.state_simulators.StateSimulator(
+    simulator = qleet.simulators.circuit_simulators.CircuitSimulator(
         cirq_descriptor, noise_model=dict()
     )
     density_matrix = simulator.simulate(params)
@@ -64,7 +64,7 @@ def test_qiskit_simulator():
         circuit=qiskit_circuit, params=params, cost_function=cirq.PauliSum()
     )
 
-    simulator = qleet.simulators.state_simulators.StateSimulator(qiskit_descriptor)
+    simulator = qleet.simulators.circuit_simulators.CircuitSimulator(qiskit_descriptor)
     params = {p: np.random.random() * 2 * np.pi for p in qiskit_descriptor.parameters}
     state_vector = simulator.simulate(params)
     assert isinstance(state_vector, np.ndarray), "State vector should be a numpy array"

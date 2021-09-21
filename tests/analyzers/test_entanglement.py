@@ -42,32 +42,32 @@ def generate_circuit_2(params, _c_params=None):
     return ansatz
 
 
-@pytest.mark.xfail
-@pytest.mark.parametrize("circuit", [generate_circuit_1, generate_circuit_2])
-def test_entanglement_circuits(circuit):
-    """Tests that the entanglement measures give correct output"""
-    ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
-    res1, res2 = 0.0, 0.0
-    for measure in ["meyer-wallach", "scott"]:
-        ent_res = ent_circ.entanglement_capability(measure)
-        if not isinstance(ent_res, np.ndarray):
-            res1 = ent_res
-        else:
-            res2 = ent_res[0]
+# @pytest.mark.xfail
+# @pytest.mark.parametrize("circuit", [generate_circuit_1, generate_circuit_2])
+# def test_entanglement_circuits(circuit):
+#     """Tests that the entanglement measures give correct output"""
+#     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
+#     res1, res2 = 0.0, 0.0
+#     for measure in ["meyer-wallach", "scott"]:
+#         ent_res = ent_circ.entanglement_capability(measure)
+#         if not isinstance(ent_res, np.ndarray):
+#             res1 = ent_res
+#         else:
+#             res2 = ent_res[0]
 
-    assert np.isclose(res1, res2, atol=0.3, rtol=0.3)
+#     assert np.isclose(res1, res2, atol=0.3, rtol=0.3)
 
 
-@pytest.mark.xfail
-@pytest.mark.parametrize("circuit", [generate_circuit_1])
-@pytest.mark.parametrize("measure", ["meyer-wallach", "scott"])
-def test_entanglement_measures(circuit, measure):
-    """Tests that the entanglement measures give correct output"""
-    ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
-    ent_res = ent_circ.entanglement_capability(measure)
-    if not isinstance(ent_res, np.ndarray):
-        res1 = ent_res
-    else:
-        res1 = ent_res[0]
+# @pytest.mark.xfail
+# @pytest.mark.parametrize("circuit", [generate_circuit_1])
+# @pytest.mark.parametrize("measure", ["meyer-wallach", "scott"])
+# def test_entanglement_measures(circuit, measure):
+#     """Tests that the entanglement measures give correct output"""
+#     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
+#     ent_res = ent_circ.entanglement_capability(measure)
+#     if not isinstance(ent_res, np.ndarray):
+#         res1 = ent_res
+#     else:
+#         res1 = ent_res[0]
 
-    assert np.isclose(res1, 0.0, atol=0.3, rtol=0.3)
+#     assert np.isclose(res1, 0.0, atol=0.3, rtol=0.3)

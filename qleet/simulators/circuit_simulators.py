@@ -7,7 +7,8 @@ import qiskit
 import qleet
 
 
-class StateSimulator:
+class CircuitSimulator:
+    """ The interface for users to execute their CircuitDescriptor objects """
     def __init__(
         self,
         circuit: qleet.utils.circuit.CircuitDescriptor,
@@ -21,6 +22,16 @@ class StateSimulator:
         """
         self.circuit = circuit
         self.noise_model = noise_model
+        self._result = None
+
+    @property
+    def result(
+        self,
+    ) -> typing.Optional[np.ndarray]:
+        """Get the results stored from the circuit simulator
+        :return: stored result of the circuit simulation if it has been performed, else None.
+        """
+        return self._result
 
     def simulate(
         self,
@@ -53,15 +64,19 @@ class StateSimulator:
                     circuit, qiskit.Aer.get_backend("aer_simulator_statevector")
                 ).result()
                 result_data = result.data(0)["snapshots"]["statevector"]["final"][0]
-            return result_data
+
         elif self.circuit.default_backend == "cirq":
             simulator = cirq.Simulator()
             result = simulator.simulate(self.circuit.cirq_circuit, param_resolver)
             if self.noise_model is None:
-                return result.final_state_vector
+                result_data = result.final_state_vector
             else:
-                return result.density_matrix_of()
+                result_data = result.density_matrix_of()
+
         else:
             raise NotImplementedError(
                 "Parametrized circuit simulation is not implemented for this backend."
             )
+
+        self._result = result_data
+        return result_data

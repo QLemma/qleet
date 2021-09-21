@@ -123,6 +123,20 @@ class CircuitDescriptor:
         return convert_to_qiskit(self._circuit)
 
     @property
+    def num_qubits(self) -> qiskit.QuantumCircuit:
+        """Get the number of qubits for a circuit
+        :return: the number of qubits in the circuit
+        """
+        if isinstance(self._circuit, cirq.Circuit):
+            return len(self._circuit.all_qubits())
+        elif isinstance(self._circuit, qiskit.QuantumCircuit):
+            return self._circuit.num_qubits
+        elif isinstance(self._circuit, pyquil.Program):
+            return len(self._circuit.get_qubits())
+        else:
+            raise ValueError("Unsupported framework of circuit")
+
+    @property
     def cirq_cost(self) -> cirq.PauliSum:
         """Returns the cost function, which is a function that takes in the state vector or the
         density matrix and returns the loss value of the solution envisioned by the Quantum Circuit.
