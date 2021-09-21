@@ -40,11 +40,17 @@ def test_cirq_simulator_density_matrix():
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
-    simulator = qleet.simulators.state_simulators.StateSimulator(cirq_descriptor, noise_model=dict())
+    simulator = qleet.simulators.state_simulators.StateSimulator(
+        cirq_descriptor, noise_model=dict()
+    )
     density_matrix = simulator.simulate(params)
-    assert isinstance(density_matrix, np.ndarray), "Density matrix should be a numpy array"
+    assert isinstance(
+        density_matrix, np.ndarray
+    ), "Density matrix should be a numpy array"
     assert (
-        len(density_matrix.shape) == 2 and density_matrix.shape[0] == 4 and density_matrix.shape[1] == 4
+        len(density_matrix.shape) == 2
+        and density_matrix.shape[0] == 4
+        and density_matrix.shape[1] == 4
     ), "State vector is not of right shape"
 
 

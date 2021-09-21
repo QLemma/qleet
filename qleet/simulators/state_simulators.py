@@ -62,4 +62,6 @@ class StateSimulator:
             else:
                 return result.density_matrix_of()
         else:
-            raise NotImplementedError("Parametrized circuit simulation is not implemented for this backend.")
+            raise NotImplementedError(
+                "Parametrized circuit simulation is not implemented for this backend."
+            )

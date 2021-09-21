@@ -4,7 +4,7 @@ tensorflow==2.4.1
 tensorflow-quantum==0.5.1
 numpy>=1.19
 tensorboard==2.5.0
-qiskit==0.24.1
+qiskit==0.30.0
 dash==1.21.0
 networkx>=2.5
 pandas>=1.1.0
