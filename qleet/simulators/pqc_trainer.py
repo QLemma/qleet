@@ -15,7 +15,7 @@ class PQCSimulatedTrainer:
                 tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
                 tfq.layers.PQC(
                     circuit.cirq_circuit,
-                    circuit.cost_function,
+                    circuit.cirq_cost,
                     differentiator=tfq.differentiators.Adjoint(),
                 ),
             ]

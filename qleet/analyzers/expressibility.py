@@ -1,6 +1,7 @@
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
+
 from qiskit import execute, Aer
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.quantum_info import state_fidelity
