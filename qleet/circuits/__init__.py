@@ -1,1 +1,1 @@
-import qleet.circuits.maxcut
+import qleet.circuits.qaoa_maxcut

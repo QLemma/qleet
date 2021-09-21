@@ -1,5 +1,4 @@
 import itertools
-import typing
 
 import numpy as np
 
@@ -69,8 +68,7 @@ class EntanglementCapability:
         return np.sum(trace).real
 
     def meyer_wallach_measure(self, states, num_qubits):
-        r"""
-        Returns the meyer-wallach entanglement measure for the given circuit.
+        r"""Returns the meyer-wallach entanglement measure for the given circuit.
 
         .. math::
         Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}\Bigg(1-
@@ -85,8 +83,7 @@ class EntanglementCapability:
         return ns.real
 
     def scott_measure(self, states, num_qubits):
-        """
-        Returns the scott entanglement measure for the given circuit.
+        r"""Returns the scott entanglement measure for the given circuit.
 
         .. math::
         Q = \frac{1}{\lfloor N/2 \rfloor} \sum_{m=1}^{\lfloor N/2 \rfloor} Q_{m} \Rightarrow
@@ -136,15 +133,13 @@ class EntanglementCapability:
         self, measure: str = "meyer-wallach", shots: int = 1024
     ) -> float:
         """Returns entanglement measure for the given circuit
-        Args:
-            measure (str): specification for the measure used in the entangling capability
+        :param measure: specification for the measure used in the entangling capability
                             calculation "meyer-wallach" for Meyer-Wallach measure and
                            "scott" for Scott measure.
-            shorts (int): number of shots for circuit execution
-        Returns:
-            pqc_entangling_capability (float): entanglement measure value
+        :param shots: number of shots for circuit execution
+        :returns pqc_entangling_capability (float): entanglement measure value
+        :raises ValueError: if invalid measure is specified
         """
-
         thetas, phis = self.gen_params(self.num_samples, self.param_shape)
         theta, phi = thetas[0], phis[0]
         try:
@@ -171,5 +166,9 @@ class EntanglementCapability:
             pqc_entanglement_capability = self.scott_measure(
                 th_circ + ph_circ, num_qubits
             ) / (2 * self.num_samples)
+        else:
+            raise ValueError(
+                "Invalid measure provided, choose from 'meyer-wallach' or 'scott'"
+            )
 
         return pqc_entanglement_capability

@@ -8,7 +8,6 @@ from sklearn.decomposition import PCA
 import plotly.express as px
 import plotly.graph_objects as pg
 
-from ..circuits.maxcut import QAOAMaxCutSolver
 from ..analyzers.landscape import LossLandscapePlotter
 
 
@@ -41,7 +40,7 @@ class OptimizationPathPlotter(MetaLogger):
         ], "Mode of Dimentionality Reduction is not implemented, use PCA or tSNE."
         self.dimentionality_reduction = TSNE if mode == "tSNE" else PCA
 
-    def log(self, solver: QAOAMaxCutSolver, _loss):
+    def log(self, solver, _loss):
         self.data.append(solver.model.trainable_variables[0].numpy())
         self.runs.append(self.trial)
         self.item.append(self.counter)
@@ -69,7 +68,7 @@ class LossLandscapePathPlotter(MetaLogger):
         self.loss: typing.List[float] = []
         self.plotter = base_plotter
 
-    def log(self, solver: QAOAMaxCutSolver, loss: float):
+    def log(self, solver, loss: float):
         self.data.append(
             self.plotter.axes @ solver.model.trainable_variables[0].numpy()
         )
