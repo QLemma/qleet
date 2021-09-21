@@ -61,8 +61,8 @@ class CircuitDescriptor:
         circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program],
         params: typing.List[typing.Union[sympy.Symbol, qiskit.circuit.Parameter]],
         cost_function: typing.Union[
-            cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum
-        ],
+            cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None
+        ] = None,
     ):
         self._circuit = circuit
         self._params = params
@@ -81,8 +81,8 @@ class CircuitDescriptor:
 
     @classmethod
     def from_qasm(cls, qasm_str: str, params, cost_function):
-        """Generate the descriptor from QASM string
-        :param qasm_str: 3-tuple of QASM strings for each part of the circuit
+        """Generate the descriptor from OpenQASM string
+        :param qasm_str:OpenQASM string for each part of the circuit
         :param params: list of sympy symbols which act as parameters
         :param cost_function: pauli-string operator to implement cost function
         :return: The CircuitDescriptor object
@@ -110,14 +110,14 @@ class CircuitDescriptor:
 
     @property
     def cirq_circuit(self) -> cirq.Circuit:
-        """Get the 3-tuple of circuits in cirq
+        """Get the circuit in cirq
         :return: the cirq representation of the circuit
         """
         return convert_to_cirq(self._circuit)
 
     @property
     def qiskit_circuit(self) -> qiskit.QuantumCircuit:
-        """Get the 3-tuple of circuits in qiskit
+        """Get the circuit in qiskit
         :return: the cirq representation of the circuit
         """
         return convert_to_qiskit(self._circuit)
