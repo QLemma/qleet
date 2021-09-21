@@ -33,11 +33,11 @@ This project is supported by Unitary Fund.
 
 #### Ansatz
 
-<img src="images/ansatz.png" alt="ansatz" style="zoom:60%;" />
+<img src="images/ansatz.png" alt="ansatz" width=280 />
 
 #### Expressibility
 
-<img src="images/expressibility.gif" alt="Expressibility" style="zoom:25%;" />
+<img src="images/expressibility.gif" alt="Expressibility" width=480 />
 
 ### Solving MAX-CUT using QAOA 
 
@@ -51,7 +51,7 @@ This project is supported by Unitary Fund.
 
 #### Training Path
 
-<img src="images/trainingpath.gif" alt="trainingpath" style="zoom:80%;" />
+<img src="images/trainingpath.gif" alt="trainingpath" width=480 />
 <!-- ![trainingpath](images/trainingpath.gif) -->
 
 
