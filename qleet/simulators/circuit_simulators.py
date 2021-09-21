@@ -15,8 +15,7 @@ class CircuitSimulator:
         circuit: qleet.utils.circuit.CircuitDescriptor,
         noise_model: typing.Optional[dict] = None,
     ):
-        """
-        Initialize the state simulator
+        """Initialize the state simulator
         :param circuit: the target circuit to simulate
         :param noise_model: the noise model as dict or empty dict for density matrix simulations,
             None if performing state vector simulations
@@ -39,11 +38,11 @@ class CircuitSimulator:
         param_resolver: typing.Dict[qiskit.circuit.Parameter, float],
         shots: int = 1024,
     ) -> np.ndarray:
-        """
-        Simulate to get the state vector or the density matrix
+        """Simulate to get the state vector or the density matrix
         :param param_resolver: a dictionary of all the symbols/parameters mapping to their values
         :param shots: number of times to run the qiskit density matrix simulator
         :returns: state vector or density matrix resulting from the simulation
+        :raises NotImplementedError: if circuit simulation is not supported for a backend
         """
         if self.circuit.default_backend == "qiskit":
             circuit = self.circuit.qiskit_circuit.bind_parameters(param_resolver)

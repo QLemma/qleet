@@ -1,73 +1,41 @@
 import pytest
-
 import numpy as np
+
+import qiskit
+import cirq
+import pyquil
 from qiskit import QuantumCircuit
 
+import qleet
 from qleet.analyzers.entanglement import EntanglementCapability
 
 
-def generate_circuit_1(params: np.ndarray, _c_params=None):
-    """
-    Generates a circuit with no interactions
-    Each qubit has
+def test_entanglement_local():
+    """Test entanglement capability of a circuit with local gates"""
+    params = []
+    qiskit_circuit = qiskit.QuantumCircuit(2)
+    qiskit_circuit.x(0)
+    qiskit_circuit.x(1)
+    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+        circuit=qiskit_circuit, params=params, cost_function=None
+    )
 
-    :param params:
-    :param _c_params:
-    :return:
-    """
-    layers, num_qubits, depth = params.shape
-    ansatz = QuantumCircuit(num_qubits)
-    for idx in range(layers):
-        if idx:
-            ansatz.barrier()
-        for ind in range(num_qubits):
-            ansatz.rx(params[idx][ind][0], ind)
-            ansatz.rz(params[idx][ind][1], ind)
-    return ansatz
+    qiskit_entg_capability = EntanglementCapability(qiskit_descriptor, samples=100)
+    entg = qiskit_entg_capability.entanglement_capability("meyer-wallach")
+    assert np.isclose(entg, 0)
 
 
-def generate_circuit_2(params, _c_params=None):
-    layers, num_qubits, depth = params.shape
-    ansatz = QuantumCircuit(num_qubits)
-    for idx in range(layers):
-        if idx:
-            ansatz.barrier()
-        for ind in range(num_qubits):
-            ansatz.rx(params[idx][ind][0], ind)
-            ansatz.rz(params[idx][ind][1], ind)
-        indexes = [[i, i - 1] for i in reversed(range(1, num_qubits))]
-        for ind in indexes:
-            ansatz.cx(ind[0], ind[1])
+def test_entanglement_non_local():
+    """Test entanglement capability of a parameterized circuit with non-local gates"""
+    params = [qiskit.circuit.Parameter(r"$θ_1$"), qiskit.circuit.Parameter(r"$θ_2$")]
+    qiskit_circuit = qiskit.QuantumCircuit(2)
+    qiskit_circuit.rx(params[0], 0)
+    qiskit_circuit.cx(0, 1)
+    qiskit_circuit.rx(params[1], 1)
+    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+        circuit=qiskit_circuit, params=params, cost_function=None
+    )
 
-    return ansatz
-
-
-# @pytest.mark.xfail
-# @pytest.mark.parametrize("circuit", [generate_circuit_1, generate_circuit_2])
-# def test_entanglement_circuits(circuit):
-#     """Tests that the entanglement measures give correct output"""
-#     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
-#     res1, res2 = 0.0, 0.0
-#     for measure in ["meyer-wallach", "scott"]:
-#         ent_res = ent_circ.entanglement_capability(measure)
-#         if not isinstance(ent_res, np.ndarray):
-#             res1 = ent_res
-#         else:
-#             res2 = ent_res[0]
-
-#     assert np.isclose(res1, res2, atol=0.3, rtol=0.3)
-
-
-# @pytest.mark.xfail
-# @pytest.mark.parametrize("circuit", [generate_circuit_1])
-# @pytest.mark.parametrize("measure", ["meyer-wallach", "scott"])
-# def test_entanglement_measures(circuit, measure):
-#     """Tests that the entanglement measures give correct output"""
-#     ent_circ = EntanglementCapability(circuit, [(1, 4, 2)])
-#     ent_res = ent_circ.entanglement_capability(measure)
-#     if not isinstance(ent_res, np.ndarray):
-#         res1 = ent_res
-#     else:
-#         res1 = ent_res[0]
-
-#     assert np.isclose(res1, 0.0, atol=0.3, rtol=0.3)
+    qiskit_entg_capability = EntanglementCapability(qiskit_descriptor, samples=100)
+    entg = qiskit_entg_capability.entanglement_capability("meyer-wallach")
+    assert entg > 0

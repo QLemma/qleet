@@ -1,35 +1,35 @@
 import itertools
+import typing
 
-import numpy as np
-
-from qiskit import execute, Aer
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.quantum_info import partial_trace
 from scipy.special import comb
+
+import numpy as np
+
+from qleet.utils.circuit import CircuitDescriptor
+from qleet.simulators.circuit_simulators import CircuitSimulator
 
 
 class EntanglementCapability:
     """Calculates entangling capability of a parameterized quantum circuit"""
 
-    def __init__(self, circuit, circuit_params, noise_model=None, samples=1000):
+    def __init__(
+        self,
+        circuit: CircuitDescriptor,
+        noise_model: typing.Union[dict, NoiseModel, None] = None,
+        samples: int = 1000,
+    ):
         """Constructor for entanglement capability plotter
 
-        :param circuit (template(uparams, cparams, **kwargs)): circuit template with arguments
-            for parameterized single-qubit gates and two-qubit gates parameters.
-        :param circuit_params (list[tuples]): [(layers, num_qubits, single-qubit operations),
-            (layers, num_qubits, two-qubit operations)] list of shapes of the parameter
-            object in the circuit (unitary and controlled layer).
-        :param initialization noise_model (dict, NoiseModel): dictionary for generating noise model
-        :param samples (int): number of samples for the experiment
-
-        Returns:
-            Expressibility object instance
+        :param circuit: input circuit as a CircuitDescriptor object
+        :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary for
+            generating noise model
+        :param samples: number of samples for the experiment
+        :returns Entanglement object instance
         """
         # TODO add support for the circuit parser  # pylint: disable=W0511
         self.circuit = circuit
-
-        if isinstance(circuit_params, list):
-            self.param_shape = circuit_params
 
         if noise_model is not None:
             if isinstance(noise_model, dict):
@@ -42,27 +42,33 @@ class EntanglementCapability:
                 self.noise_model = noise_model
         else:
             self.noise_model = None
-        self.num_samples = samples
 
-    @staticmethod
-    def gen_params(samples, params):
-        """Generate parameters for the calculation of entangling capability
+        self.num_samples = samples
+        self.entgcap = 0
+
+    def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
+        """Generate parameters for the calculation of expressibility
         Args:
-            samples (int): number of samples considered for the entangling capability calculation
-            params (list(tuple)): shape of the parameters for the parameterized quantum circuit
+            samples (int): number of samples considered for the expressibility calculation
         Return
             theta (np.ndarray): first list of parameters for the parameterized quantum circuit
             phi (np.ndarray): second list of parameters for the parameterized quantum circuit
         """
-        theta = [np.random.uniform(0, 2 * np.pi, (samples, *param)) for param in params]
-        phi = [np.random.uniform(0, 2 * np.pi, (samples, *param)) for param in params]
+        theta = [
+            {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
+            for _ in range(self.num_samples)
+        ]
+        phi = [
+            {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
+            for _ in range(self.num_samples)
+        ]
         return theta, phi
 
     @staticmethod
-    def scott_helper(st, perms):
+    def scott_helper(state, perms):
         """Helper function for entanglement measure. It gives trace of the output state"""
         dems = np.linalg.matrix_power(
-            [partial_trace(st, list(qb)).data for qb in perms], 2
+            [partial_trace(state, list(qb)).data for qb in perms], 2
         )
         trace = np.trace(dems, axis1=1, axis2=2)
         return np.sum(trace).real
@@ -77,7 +83,10 @@ class EntanglementCapability:
         """
         permutations = list(itertools.combinations(range(num_qubits), num_qubits - 1))
         ns = 2 * sum(
-            [1 - 1 / num_qubits * self.scott_helper(st, permutations) for st in states]
+            [
+                1 - 1 / num_qubits * self.scott_helper(state, permutations)
+                for state in states
+            ]
         )
         print(permutations)
         return ns.real
@@ -103,31 +112,15 @@ class EntanglementCapability:
         for ind, perm in enumerate(permutations):
             ns.append(
                 contri[ind]
-                * sum([1 - combs[ind] * self.scott_helper(st, perm) for st in states])
+                * sum(
+                    [
+                        1 - combs[ind] * self.scott_helper(state, perm)
+                        for state in states
+                    ]
+                )
             )
 
         return np.array(ns)
-
-    def circuit_ouput(self, circuit, shots=1024):
-        """Returns output for the given circuit"""
-        if self.noise_model is not None:
-            circuit.snapshot("final", snapshot_type="density_matrix")
-            result = execute(
-                circuit,
-                Aer.get_backend("aer_simulator_density_matrix"),
-                shots=shots,
-                noise_model=self.noise_model,
-            ).result()
-            result_data = result.data(0)["snapshots"]["density_matrix"]["final"][0][
-                "value"
-            ]
-        else:
-            circuit.snapshot("final", snapshot_type="statevector")
-            result = execute(
-                circuit, Aer.get_backend("aer_simulator_statevector")
-            ).result()
-            result_data = result.data(0)["snapshots"]["statevector"]["final"][0]
-        return result_data
 
     def entanglement_capability(
         self, measure: str = "meyer-wallach", shots: int = 1024
@@ -140,35 +133,31 @@ class EntanglementCapability:
         :returns pqc_entangling_capability (float): entanglement measure value
         :raises ValueError: if invalid measure is specified
         """
-        thetas, phis = self.gen_params(self.num_samples, self.param_shape)
-        theta, phi = thetas[0], phis[0]
-        try:
-            ctheta, cphi = thetas[1], phis[1]
-        except IndexError:
-            ctheta, cphi = [None] * self.num_samples, [None] * self.num_samples
+        thetas, phis = self.gen_params()
 
-        th_circ = [
-            self.circuit_ouput(self.circuit(th, cth), shots)  # pylint: disable=E1121
-            for th, cth in zip(theta, ctheta)
+        theta_circs = [
+            CircuitSimulator(self.circuit, self.noise_model).simulate(theta, shots)
+            for theta in thetas
         ]
-        ph_circ = [
-            self.circuit_ouput(self.circuit(ph, cph), shots)  # pylint: disable=E1121
-            for ph, cph in zip(phi, cphi)
+        phi_circs = [
+            CircuitSimulator(self.circuit, self.noise_model).simulate(phi, shots)
+            for phi in phis
         ]
 
-        num_qubits = self.param_shape[0][1]
+        num_qubits = self.circuit.num_qubits
 
         if measure == "meyer-wallach":
             pqc_entanglement_capability = self.meyer_wallach_measure(
-                th_circ + ph_circ, num_qubits
+                theta_circs + phi_circs, num_qubits
             ) / (2 * self.num_samples)
         elif measure == "scott":
             pqc_entanglement_capability = self.scott_measure(
-                th_circ + ph_circ, num_qubits
+                theta_circs + phi_circs, num_qubits
             ) / (2 * self.num_samples)
         else:
             raise ValueError(
                 "Invalid measure provided, choose from 'meyer-wallach' or 'scott'"
             )
 
+        self.entgcap = pqc_entanglement_capability
         return pqc_entanglement_capability

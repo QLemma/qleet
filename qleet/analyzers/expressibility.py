@@ -108,6 +108,7 @@ class Expressibility:
                            "kld" for KL divergence and "jsd" Jensen-Shannon divergence.
         :param shots: number of shots for circuit execution
         :returns pqc_expressibility: float, expressibility value
+        :raises ValueError: if invalid measure is specified
         """
         haar = self.prob_haar()
         haar_prob: np.ndarray = haar / float(haar.sum())
@@ -127,7 +128,8 @@ class Expressibility:
             pqc_expressibility = self.kl_divergence(pqc_prob, haar_prob)
         elif measure == "jsd":
             pqc_expressibility = jensenshannon(pqc_prob, haar_prob, 2.0)
-
+        else:
+            raise ValueError("Invalid measure provided, choose from 'kld' or 'jsd'")
         self.plot_data = np.array([haar_prob, pqc_prob, bin_edges])
         self.expr = pqc_expressibility
 

@@ -126,6 +126,7 @@ class CircuitDescriptor:
     def num_qubits(self) -> qiskit.QuantumCircuit:
         """Get the number of qubits for a circuit
         :return: the number of qubits in the circuit
+        :raises ValueError: if unsupported circuit framework is given
         """
         if isinstance(self._circuit, cirq.Circuit):
             return len(self._circuit.all_qubits())
