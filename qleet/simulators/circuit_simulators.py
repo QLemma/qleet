@@ -8,7 +8,8 @@ import qleet
 
 
 class CircuitSimulator:
-    """ The interface for users to execute their CircuitDescriptor objects """
+    """The interface for users to execute their CircuitDescriptor objects"""
+
     def __init__(
         self,
         circuit: qleet.utils.circuit.CircuitDescriptor,
