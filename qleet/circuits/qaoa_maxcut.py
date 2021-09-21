@@ -1,5 +1,6 @@
 import itertools
 
+import numpy as np
 import networkx as nx
 import sympy
 import cirq
