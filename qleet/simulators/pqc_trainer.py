@@ -1,5 +1,4 @@
 import cirq
-import numpy as np
 import tqdm.auto as tqdm
 
 import tensorflow as tf
@@ -23,11 +22,12 @@ class PQCSimulatedTrainer:
         )
         self.circuit = circuit
 
-    def train(self, epochs=100, _loggers=None):
+    def train(self, n_samples=100, _loggers=None):
         dummy_input = tfq.convert_to_tensor([cirq.Circuit()])
-        with tqdm.trange(epochs) as iterator:
+        total_error = 0.0
+        with tqdm.trange(n_samples) as iterator:
             iterator.set_description("QAOA Optimization Loop")
-            for _epoch in iterator:
+            for step in iterator:
                 with tf.GradientTape() as tape:
                     error = self.model(dummy_input)
                 grads = tape.gradient(error, self.model.trainable_variables)
@@ -35,17 +35,18 @@ class PQCSimulatedTrainer:
                     zip(grads, self.model.trainable_variables)
                 )
                 error = error.numpy()[0][0]
-                iterator.set_postfix(error=error)
+                total_error += error
+                iterator.set_postfix(error=total_error / step)
         return self.model
 
     def evaluate(self, n_samples: int = 1000):
-        trained_parameters = self.model.trainable_variables[0]
-        output = tfq.layers.Sample()(
-            self.circuit.cirq_circuit,
-            symbol_names=self.circuit.parameters,
-            symbol_values=[trained_parameters],
-            repetitions=n_samples,
-        )
-        samples = output.numpy()[0]
-        loss_values = [self.circuit.cost_function(sample) for sample in samples]
-        return np.mean(loss_values)
+        dummy_input = tfq.convert_to_tensor([cirq.Circuit()])
+        total_error = 0.0
+        with tqdm.trange(n_samples) as iterator:
+            iterator.set_description("QAOA Evaluation Loop")
+            for step in iterator:
+                error = self.model(dummy_input)
+                error = error.numpy()[0][0]
+                total_error += error
+                iterator.set_postfix(error=total_error / step)
+        return total_error / n_samples

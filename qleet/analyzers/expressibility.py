@@ -11,18 +11,15 @@ class Expressibility:
     """Calculates expressibility of a parameterized quantum circuit"""
 
     def __init__(self, circuit, circuit_params, noise_model=None, samples=1000):
-        """
-        Args:
-            circuit (template(uparams, cparams, **kwargs)): circuit template with arguments
+        """Constructor the the Expressibility analyzer
+        :param circuit (template(uparams, cparams, **kwargs)): circuit template with arguments
             for parameterized single-qubit gates and two-qubit gates parameters.
-            circuit_params (list[tuples]): [(layers, num_qubits, single-qubit operations),
+        :param circuit_params: [(layers, num_qubits, single-qubit operations),
             (layers, num_qubits, two-qubit operations)] list of shapes of the parameter
             object in the circuit (unitary and controlled layer).
-            initilization noise_model (dict, NoiseModel): dictionary for generating noise model
-            samples (int): number of samples for the experiment
-
-        Returns:
-            Expressibility object instance
+        :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary for
+            generating noise model
+        :param samples: number of samples for the experiment
         """
         # TODO add support for the circuit parser  # pylint: disable=W0511
         self.circuit = circuit
@@ -96,7 +93,7 @@ class Expressibility:
     def prob_pqc(self, shots: int = 1024) -> np.ndarray:
         """Return probability density function of fidelities for PQC
         Args:
-            shorts (int): number of shots for circuit execution
+            shots (int): number of shots for circuit execution
         Return:
             fidelities (np.ndarray): np.ndarray of fidelities
         """
@@ -125,12 +122,10 @@ class Expressibility:
 
     def expressibility(self, measure: str = "kld", shots: int = 1024) -> float:
         """Returns expressibility for the circuit
-        Args:
-            measure (str): specification for the measure used in the expressibility calculation
+        :param measure: specification for the measure used in the expressibility calculation
                            "kld" for KL divergence and "jsd" Jensen-Shannon divergence.
-            shorts (int): number of shots for circuit execution
-        Returns:
-            pqc_expressibility (float): expressibility value
+        :param shots: number of shots for circuit execution
+        :returns pqc_expressibility: float, expressibility value
         """
         haar = self.prob_haar()
         haar_prob = haar / float(haar.sum())

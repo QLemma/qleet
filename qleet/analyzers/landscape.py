@@ -3,13 +3,11 @@ import tqdm.auto as tqdm
 
 import plotly.graph_objects as pg
 
-from ..circuits.maxcut import QAOAMaxCutSolver
-
 
 class LossLandscapePlotter:
     def __init__(self, solver, dim=2):
         self.n = len(solver)
-        self.solver: QAOAMaxCutSolver = solver
+        self.solver = solver
         self.dim = dim
         self.axes = self.__random_subspace(dim=self.dim)
 
