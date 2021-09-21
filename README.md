@@ -47,7 +47,8 @@ This project is supported by Unitary Fund.
 
 #### Loss Landscape
 
-![losslandscape](images/losslandscape.gif)
+<img src="images/losslandscape.gif" alt="losslandscape" width=480 />
+<!-- ![losslandscape](images/losslandscape.gif) -->
 
 #### Training Path
 
