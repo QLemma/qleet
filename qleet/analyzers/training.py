@@ -37,8 +37,8 @@ class OptimizationPathPlotter(MetaLogger):
         assert mode in [
             "tSNE",
             "PCA",
-        ], "Mode of Dimentionality Reduction is not implemented, use PCA or tSNE."
-        self.dimentionality_reduction = TSNE if mode == "tSNE" else PCA
+        ], "Mode of Dimensionality Reduction is not implemented, use PCA or tSNE."
+        self.dimensionality_reduction = TSNE if mode == "tSNE" else PCA
 
     def log(self, solver, _loss):
         self.data.append(solver.model.trainable_variables[0].numpy())
@@ -48,7 +48,7 @@ class OptimizationPathPlotter(MetaLogger):
 
     def plot(self):
         raw_params = np.stack(self.data)
-        final_params = self.dimentionality_reduction(n_components=2).fit_transform(
+        final_params = self.dimensionality_reduction(n_components=2).fit_transform(
             raw_params
         )
         max_number_of_runs = max(self.item)

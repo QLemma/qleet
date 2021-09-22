@@ -3,12 +3,8 @@ from setuptools import setup, find_packages
 with open("qleet/_version.py") as f:
     version = f.readlines()[-1].split()[-1].strip("\"'")
 
-requirements = [
-    "cirq==0.11.0",
-    "tensorflow_quantum==0.5.1",
-    "tensorflow==2.4.1",
-    "qiskit==0.26.2",
-]
+with open("requirements.txt") as f:
+    requirements = list(map(lambda x: x.strip(), f.readlines()))
 
 info = {
     "name": "qLEET",
@@ -19,7 +15,8 @@ info = {
     "license": "Apache License 2.0",
     "packages": find_packages(where="."),
     "entry_points": {"console_scripts": ["qleet-test=qleet.tests:cli"]},
-    "description": "qLEET is an open-source library for exploring Loss landscape, Expressibility, Entangling capability and Training trajectories of noisy parameterized quantum circuits.",
+    "description": "qLEET is an open-source library for exploring Loss landscape, Expressibility, Entangling\
+                    capability and Training trajectories of noisy parameterized quantum circuits.",
     "long_description": open("README.md").read(),
     "long_description_content_type": "text/markdown",
     "provides": ["qleet"],
@@ -47,4 +44,4 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
-setup(classifiers=classifiers, **(info))
+setup(classifiers=classifiers, **info)

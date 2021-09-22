@@ -24,7 +24,7 @@ class LossLandscapePlotter:
 
     def scan(self, points, distance, origin):
         chained_range = [
-            np.linspace(-distance, distance, points) for i in range(self.dim)
+            np.linspace(-distance, distance, points) for _i in range(self.dim)
         ]
         coords = np.meshgrid(*chained_range)
         coords = np.reshape(np.stack(coords, axis=-1), (-1, self.dim))

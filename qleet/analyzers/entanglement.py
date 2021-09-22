@@ -2,6 +2,7 @@ import itertools
 import typing
 
 from qiskit.providers.aer.noise import NoiseModel
+from qiskit.providers.aer.noise.noiseerror import NoiseError
 from qiskit.quantum_info import partial_trace
 from scipy.special import comb
 
@@ -28,15 +29,15 @@ class EntanglementCapability:
         :param samples: number of samples for the experiment
         :returns Entanglement object instance
         """
-        # TODO add support for the circuit parser  # pylint: disable=W0511
+        # TODO add support for the circuit parser
         self.circuit = circuit
 
         if noise_model is not None:
             if isinstance(noise_model, dict):
                 try:
                     self.noise_model = NoiseModel.from_dict(noise_model)
-                except:  # pylint: disable=W0702
-                    # TODO support for cirq's noise models # pylint: disable=W0511
+                except NoiseError:
+                    # TODO support for cirq's noise models
                     self.noise_model = None
             elif isinstance(noise_model, NoiseModel):
                 self.noise_model = noise_model
@@ -44,15 +45,11 @@ class EntanglementCapability:
             self.noise_model = None
 
         self.num_samples = samples
-        self.entgcap = 0
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
-        Args:
-            samples (int): number of samples considered for the expressibility calculation
-        Return
-            theta (np.ndarray): first list of parameters for the parameterized quantum circuit
-            phi (np.ndarray): second list of parameters for the parameterized quantum circuit
+        :return theta (np.array): first list of parameters for the parameterized quantum circuit
+        :return phi (np.array): second list of parameters for the parameterized quantum circuit
         """
         theta = [
             {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
@@ -105,16 +102,16 @@ class EntanglementCapability:
             list(itertools.combinations(range(num_qubits), num_qubits - idx))
             for idx in m
         ]
-        combs = [1 / comb(num_qubits, idx) for idx in m]
-        contri = [2 ** idx / (2 ** idx - 1) for idx in m]
+        combinations = [1 / comb(num_qubits, idx) for idx in m]
+        contributions = [2 ** idx / (2 ** idx - 1) for idx in m]
         ns = []
 
         for ind, perm in enumerate(permutations):
             ns.append(
-                contri[ind]
+                contributions[ind]
                 * sum(
                     [
-                        1 - combs[ind] * self.scott_helper(state, perm)
+                        1 - combinations[ind] * self.scott_helper(state, perm)
                         for state in states
                     ]
                 )
@@ -135,11 +132,11 @@ class EntanglementCapability:
         """
         thetas, phis = self.gen_params()
 
-        theta_circs = [
+        theta_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(theta, shots)
             for theta in thetas
         ]
-        phi_circs = [
+        phi_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(phi, shots)
             for phi in phis
         ]
@@ -148,16 +145,15 @@ class EntanglementCapability:
 
         if measure == "meyer-wallach":
             pqc_entanglement_capability = self.meyer_wallach_measure(
-                theta_circs + phi_circs, num_qubits
+                theta_circuits + phi_circuits, num_qubits
             ) / (2 * self.num_samples)
         elif measure == "scott":
             pqc_entanglement_capability = self.scott_measure(
-                theta_circs + phi_circs, num_qubits
+                theta_circuits + phi_circuits, num_qubits
             ) / (2 * self.num_samples)
         else:
             raise ValueError(
                 "Invalid measure provided, choose from 'meyer-wallach' or 'scott'"
             )
 
-        self.entgcap = pqc_entanglement_capability
         return pqc_entanglement_capability

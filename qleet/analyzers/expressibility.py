@@ -2,14 +2,15 @@ import itertools
 import typing
 
 from qiskit.providers.aer.noise import NoiseModel
+from qiskit.providers.aer.noise.noiseerror import NoiseError
 from qiskit.quantum_info import state_fidelity
 from scipy.spatial.distance import jensenshannon
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qleet.utils.circuit import CircuitDescriptor
-from qleet.simulators.circuit_simulators import CircuitSimulator
+from ..utils.circuit import CircuitDescriptor
+from ..simulators.circuit_simulators import CircuitSimulator
 
 
 class Expressibility:
@@ -35,7 +36,7 @@ class Expressibility:
             if isinstance(noise_model, dict):
                 try:
                     self.noise_model = NoiseModel.from_dict(noise_model)
-                except:  # pylint: disable=W0702
+                except NoiseError:
                     # TODO support for cirq's noise models # pylint: disable=W0511
                     self.noise_model = None
             elif isinstance(noise_model, NoiseModel):
@@ -50,15 +51,13 @@ class Expressibility:
     def kl_divergence(prob_a: np.ndarray, prob_b: np.ndarray) -> float:
         """Returns KL divergence between two probabilities"""
         prob_a[prob_a == 0] = 1e-10
-        return np.sum(np.where(prob_a != 0, prob_a * np.log(prob_a / prob_b), 0))
+        kl_div = np.sum(np.where(prob_a != 0, prob_a * np.log(prob_a / prob_b), 0))
+        return typing.cast(float, kl_div)
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
-        Args:
-            samples (int): number of samples considered for the expressibility calculation
-        Return
-            theta (np.ndarray): first list of parameters for the parameterized quantum circuit
-            phi (np.ndarray): second list of parameters for the parameterized quantum circuit
+        :returns theta (np.array): first list of parameters for the parameterized quantum circuit
+        :returns phi (np.array): second list of parameters for the parameterized quantum circuit
         """
         theta = [
             {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
@@ -78,26 +77,23 @@ class Expressibility:
 
     def prob_pqc(self, shots: int = 1024) -> np.ndarray:
         """Return probability density function of fidelities for PQC
-        Args:
-            shots (int): number of shots for circuit execution
-        Return:
-            fidelities (np.ndarray): np.ndarray of fidelities
+        :param shots: number of shots for circuit execution
+        :returns fidelities (np.array): np.array of fidelities
         """
         thetas, phis = self.gen_params()
 
-        theta_circs = [
+        theta_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(theta, shots)
             for theta in thetas
         ]
-        phi_circs = [
+        phi_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(phi, shots)
             for phi in phis
         ]
-
         fidelity = np.array(
             [
-                state_fidelity(rhoa, rhob)
-                for rhoa, rhob in itertools.product(theta_circs, phi_circs)
+                state_fidelity(rho_a, rho_b)
+                for rho_a, rho_b in itertools.product(theta_circuits, phi_circuits)
             ]
         )
         return np.array(fidelity)
@@ -150,7 +146,7 @@ class Expressibility:
         plt.bar(bin_middles, haar_prob, width=bin_width, label="Haar")
         plt.bar(bin_middles, pqc_prob, width=bin_width, label="PQC", alpha=0.6)
         plt.xlim((-0.05, 1.05))
-        plt.ylim(bottom=0.0, top=max(max(pqc_prob), max((haar_prob))) + 0.01)
+        plt.ylim(bottom=0.0, top=max(max(pqc_prob), max(haar_prob)) + 0.01)
         plt.grid(True)
         plt.title(f"Expressibility: {np.round(expr,5)}")
         plt.xlabel("Fidelity")
