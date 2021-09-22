@@ -21,7 +21,7 @@ This project is supported by Unitary Fund.
 
 ## Features
 
-1. Will support [Qiskit’s](https://qiskit.org/) and [Cirq’s](https://quantumai.google/cirq) *quantum circuits* and *noise models*.
+1. Will support [Qiskit’s](https://qiskit.org/), [Cirq’s](https://quantumai.google/cirq) and [pyQuil's](https://github.com/rigetti/pyquil) *quantum circuits* and *noise models*.
 2. Provides opportunities to improve existing algorithms like *[VQE](https://www.nature.com/articles/ncomms5213)*, *[QAOA](https://arxiv.org/abs/1411.4028)* by utilizing intuitive insights from the ansatz capability and structure of loss landscape.
 3. Facilitate research in designing new hybrid quantum-classical algorithms.
    
