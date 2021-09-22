@@ -9,11 +9,12 @@ from scipy.spatial.distance import jensenshannon
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..utils.circuit import CircuitDescriptor
+from ..interface.metas import MetaExplorer
+from ..interface.circuit import CircuitDescriptor
 from ..simulators.circuit_simulators import CircuitSimulator
 
 
-class Expressibility:
+class Expressibility(MetaExplorer):
     """Calculates expressibility of a parameterized quantum circuit"""
 
     def __init__(
@@ -29,7 +30,7 @@ class Expressibility:
         :param samples: number of samples for the experiment
         """
         # TODO add support for the circuit parser  # pylint: disable=W0511
-
+        super().__init__()
         self.circuit = circuit
 
         if noise_model is not None:
@@ -45,7 +46,7 @@ class Expressibility:
             self.noise_model = None
         self.num_samples = samples
         self.expr = 0.0
-        self.plot_data = np.array([])
+        self.plot_data: typing.List[np.ndarray] = []
 
     @staticmethod
     def kl_divergence(prob_a: np.ndarray, prob_b: np.ndarray) -> float:
@@ -126,7 +127,7 @@ class Expressibility:
             pqc_expressibility = jensenshannon(pqc_prob, haar_prob, 2.0)
         else:
             raise ValueError("Invalid measure provided, choose from 'kld' or 'jsd'")
-        self.plot_data = np.array([haar_prob, pqc_prob, bin_edges])
+        self.plot_data = [haar_prob, pqc_prob, bin_edges]
         self.expr = pqc_expressibility
 
         return pqc_expressibility

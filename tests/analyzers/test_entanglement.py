@@ -10,7 +10,7 @@ def test_entanglement_local():
     qiskit_circuit = qiskit.QuantumCircuit(2)
     qiskit_circuit.x(0)
     qiskit_circuit.x(1)
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=None
     )
 
@@ -32,7 +32,7 @@ def test_entanglement_non_local():
     qiskit_circuit.rx(params[0], 0)
     qiskit_circuit.cx(0, 1)
     qiskit_circuit.rx(params[1], 1)
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=None
     )
 

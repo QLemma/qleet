@@ -15,7 +15,7 @@ def test_cirq_constructor():
             cirq.CX(cirq.LineQubit(2), cirq.LineQubit(1)),
         ]
     )
-    cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=cirq_circuit, params=[], cost_function=cirq.PauliSum()
     )
     assert cirq_circuit == cirq_descriptor.cirq_circuit
@@ -28,7 +28,7 @@ def test_qiskit_constructor():
     qiskit_circuit.h(2)
     qiskit_circuit.cx(2, 1)
 
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=[], cost_function=cirq.PauliSum()
     )
     assert qiskit_circuit == qiskit_descriptor.qiskit_circuit
@@ -43,7 +43,7 @@ def test_cirq_qiskit_conversion():
             cirq.CX(cirq.NamedQubit("q_2"), cirq.NamedQubit("q_1")),
         ]
     )
-    cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=cirq_circuit, params=[], cost_function=cirq.PauliSum()
     )
     assert cirq_circuit == cirq_descriptor.cirq_circuit
@@ -54,7 +54,7 @@ def test_cirq_qiskit_conversion():
     qiskit_circuit.h(2)
     qiskit_circuit.cx(2, 1)
 
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=[], cost_function=cirq.PauliSum()
     )
     assert qiskit_circuit.qasm() == cirq_descriptor.qiskit_circuit.qasm()
@@ -71,7 +71,7 @@ def test_cirq_to_qiskit_parametrized():
             cirq.rx(params[1]).on(cirq.NamedQubit("q_1")),
         ]
     )
-    cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     qiskit_circuit = cirq_descriptor.qiskit_circuit

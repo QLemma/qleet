@@ -4,7 +4,7 @@ import cirq
 import numpy as np
 import qiskit
 
-import qleet
+from qleet.interface.circuit import CircuitDescriptor
 
 
 class CircuitSimulator:
@@ -12,7 +12,7 @@ class CircuitSimulator:
 
     def __init__(
         self,
-        circuit: qleet.utils.circuit.CircuitDescriptor,
+        circuit: CircuitDescriptor,
         noise_model: typing.Optional[dict] = None,
     ):
         """Initialize the state simulator

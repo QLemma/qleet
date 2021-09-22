@@ -1,10 +1,13 @@
+import typing
+
 import cirq
 import tqdm.auto as tqdm
 
 import tensorflow as tf
 import tensorflow_quantum as tfq
 
-from qleet.utils.circuit import CircuitDescriptor
+from qleet.interface.metas import AnalyzerList
+from qleet.interface.circuit import CircuitDescriptor
 
 
 class PQCSimulatedTrainer:
@@ -22,7 +25,7 @@ class PQCSimulatedTrainer:
         )
         self.circuit = circuit
 
-    def train(self, n_samples=100, _loggers=None):
+    def train(self, n_samples=100, loggers: typing.Optional[AnalyzerList] = None):
         dummy_input = tfq.convert_to_tensor([cirq.Circuit()])
         total_error = 0.0
         with tqdm.trange(n_samples) as iterator:
@@ -35,8 +38,10 @@ class PQCSimulatedTrainer:
                     zip(grads, self.model.trainable_variables)
                 )
                 error = error.numpy()[0][0]
+                if loggers is not None:
+                    loggers.log(self, error)
                 total_error += error
-                iterator.set_postfix(error=total_error / step)
+                iterator.set_postfix(error=total_error / (step + 1))
         return self.model
 
     def evaluate(self, n_samples: int = 1000):
@@ -48,5 +53,5 @@ class PQCSimulatedTrainer:
                 error = self.model(dummy_input)
                 error = error.numpy()[0][0]
                 total_error += error
-                iterator.set_postfix(error=total_error / step)
+                iterator.set_postfix(error=total_error / (step + 1))
         return total_error / n_samples

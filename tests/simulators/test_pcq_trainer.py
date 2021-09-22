@@ -2,8 +2,8 @@ import qleet
 
 
 def test_trainer():
-    qaoa_maxcut = qleet.circuits.qaoa_maxcut.QAOACircuitMaxCut()
-    circuit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qaoa_maxcut = qleet.examples.qaoa_maxcut.QAOACircuitMaxCut()
+    circuit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qaoa_maxcut.qaoa_circuit,
         params=qaoa_maxcut.params,
         cost_function=qaoa_maxcut.qaoa_cost,

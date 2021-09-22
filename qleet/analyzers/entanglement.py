@@ -8,11 +8,12 @@ from scipy.special import comb
 
 import numpy as np
 
-from qleet.utils.circuit import CircuitDescriptor
-from qleet.simulators.circuit_simulators import CircuitSimulator
+from ..interface.metas import MetaExplorer
+from ..interface.circuit import CircuitDescriptor
+from ..simulators.circuit_simulators import CircuitSimulator
 
 
-class EntanglementCapability:
+class EntanglementCapability(MetaExplorer):
     """Calculates entangling capability of a parameterized quantum circuit"""
 
     def __init__(
@@ -30,6 +31,7 @@ class EntanglementCapability:
         :returns Entanglement object instance
         """
         # TODO add support for the circuit parser
+        super().__init__()
         self.circuit = circuit
 
         if noise_model is not None:
