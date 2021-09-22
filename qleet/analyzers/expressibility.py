@@ -1,7 +1,10 @@
 import itertools
 import typing
 
-from qiskit.providers.aer.noise import NoiseModel
+from qiskit.providers.aer.noise import NoiseModel as qiskitNoiseModel
+from cirq.devices.noise_model import NoiseModel as cirqNoiseModel
+from pyquil.noise import NoiseModel as pyquilNoiseModel
+
 from qiskit.quantum_info import state_fidelity
 from scipy.spatial.distance import jensenshannon
 
@@ -11,6 +14,12 @@ import numpy as np
 from qleet.utils.circuit import CircuitDescriptor
 from qleet.simulators.circuit_simulators import CircuitSimulator
 
+NOISE_MODELS = {
+    "cirq": cirqNoiseModel,
+    "pyquil": pyquilNoiseModel,
+    "qiskit": qiskitNoiseModel,
+}
+
 
 class Expressibility:
     """Calculates expressibility of a parameterized quantum circuit"""
@@ -18,7 +27,9 @@ class Expressibility:
     def __init__(
         self,
         circuit: CircuitDescriptor,
-        noise_model: typing.Union[dict, NoiseModel, None] = None,
+        noise_model: typing.Union[
+            cirqNoiseModel, qiskitNoiseModel, pyquilNoiseModel, None
+        ] = None,
         samples: int = 1000,
     ):
         """Constructor the the Expressibility analyzer
@@ -26,22 +37,22 @@ class Expressibility:
         :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary for
             generating noise model
         :param samples: number of samples for the experiment
+        :raises ValueError: If circuit and noise model does not correspond to same framework
         """
-        # TODO add support for the circuit parser  # pylint: disable=W0511
-
         self.circuit = circuit
 
         if noise_model is not None:
-            if isinstance(noise_model, dict):
-                try:
-                    self.noise_model = NoiseModel.from_dict(noise_model)
-                except:  # pylint: disable=W0702
-                    # TODO support for cirq's noise models # pylint: disable=W0511
-                    self.noise_model = None
-            elif isinstance(noise_model, NoiseModel):
+            if isinstance(noise_model, NOISE_MODELS[circuit.default_backend]):
                 self.noise_model = noise_model
+            else:
+                raise ValueError(
+                    f"Circuit and noise model must correspond to the same \
+                    framework but circuit:{circuit.default_backend} and \
+                    noise_model:{type(noise_model)} were provided."
+                )
         else:
             self.noise_model = None
+
         self.num_samples = samples
         self.expr = 0.0
         self.plot_data = np.array([])

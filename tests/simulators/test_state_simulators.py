@@ -34,6 +34,8 @@ def test_cirq_simulator_density_matrix():
             cirq.rx(params[0]).on(cirq.NamedQubit("q_0")),
             cirq.CX(cirq.NamedQubit("q_0"), cirq.NamedQubit("q_1")),
             cirq.rx(params[1]).on(cirq.NamedQubit("q_1")),
+            cirq.amplitude_damp(0.1).on(cirq.NamedQubit("q_0")),
+            cirq.amplitude_damp(0.1).on(cirq.NamedQubit("q_1")),
         ]
     )
     cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
@@ -41,7 +43,7 @@ def test_cirq_simulator_density_matrix():
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
     simulator = qleet.simulators.circuit_simulators.CircuitSimulator(
-        cirq_descriptor, noise_model=dict()
+        cirq_descriptor, noise_model=None
     )
     density_matrix = simulator.simulate(params)
     assert isinstance(
