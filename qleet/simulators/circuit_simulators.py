@@ -4,11 +4,11 @@ import cirq
 import numpy as np
 import qiskit
 
-from ..interface.circuit import CircuitDescriptor
-
 from qiskit.providers.aer.noise import NoiseModel as qiskitNoiseModel
 from cirq.devices.noise_model import NoiseModel as cirqNoiseModel
 from pyquil.noise import NoiseModel as pyquilNoiseModel
+
+from ..interface.circuit import CircuitDescriptor
 
 
 class CircuitSimulator:

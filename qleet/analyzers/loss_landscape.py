@@ -7,7 +7,6 @@ from ..interface.metric_spec import MetricSpecifier
 
 
 class LossLandscapePlotter:
-
     def __init__(self, solver: PQCSimulatedTrainer, metric: MetricSpecifier, dim=2):
         self.n = len(solver.circuit.parameters)
         self.metric = metric
@@ -37,9 +36,11 @@ class LossLandscapePlotter:
             iterator.set_description("Contour Plot Scan")
             for i in iterator:
                 # TODO: Incorporate state vector and density matrix modes for higher speed
-                values[i] = self.metric.from_circuit(circuit_descriptor=self.solver.circuit,
-                                                     parameters=coords[i] @ self.axes + origin,
-                                                     mode='samples')
+                values[i] = self.metric.from_circuit(
+                    circuit_descriptor=self.solver.circuit,
+                    parameters=coords[i] @ self.axes + origin,
+                    mode="samples",
+                )
         return values, coords
 
     def plot(self, mode="surface", points=25, distance=np.pi):
