@@ -4,7 +4,11 @@ import cirq
 import numpy as np
 import qiskit
 
-from qleet.interface.circuit import CircuitDescriptor
+from ..interface.circuit import CircuitDescriptor
+
+from qiskit.providers.aer.noise import NoiseModel as qiskitNoiseModel
+from cirq.devices.noise_model import NoiseModel as cirqNoiseModel
+from pyquil.noise import NoiseModel as pyquilNoiseModel
 
 
 class CircuitSimulator:
@@ -13,7 +17,9 @@ class CircuitSimulator:
     def __init__(
         self,
         circuit: CircuitDescriptor,
-        noise_model: typing.Optional[dict] = None,
+        noise_model: typing.Union[
+            cirqNoiseModel, qiskitNoiseModel, pyquilNoiseModel, None
+        ] = None,
     ):
         """Initialize the state simulator
         :param circuit: the target circuit to simulate
@@ -66,12 +72,29 @@ class CircuitSimulator:
                 result_data = result.data(0)["snapshots"]["statevector"]["final"][0]
 
         elif self.circuit.default_backend == "cirq":
-            simulator = cirq.Simulator()
-            result = simulator.simulate(self.circuit.cirq_circuit, param_resolver)
-            if self.noise_model is None:
+
+            circuit = self.circuit.cirq_circuit
+            non_unitary_flag = False
+            for op in circuit.all_operations():
+                op_name = str(op).split("(")[0]
+                if op_name in [
+                    "phase_flip",
+                    "phase_damp",
+                    "amplitude_damp",
+                    "depolarize",
+                    "asymmetric_depolarize",
+                ]:
+                    non_unitary_flag = True
+                    break
+
+            if self.noise_model is None and not non_unitary_flag:
+                simulator = cirq.Simulator()  # type: ignore
+                result = simulator.simulate(self.circuit.cirq_circuit, param_resolver)
                 result_data = result.final_state_vector
             else:
-                result_data = result.density_matrix_of()
+                simulator = cirq.DensityMatrixSimulator(noise=self.noise_model)  # type: ignore
+                result = simulator.simulate(self.circuit.cirq_circuit, param_resolver)
+                result_data = result.final_density_matrix
 
         else:
             raise NotImplementedError(
