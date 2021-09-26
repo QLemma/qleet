@@ -101,8 +101,7 @@ class CircuitDescriptor:
         """
         return self._params
 
-    @property
-    def shape(self) -> int:
+    def __len__(self) -> int:
         """Number of parameters in the variational circuit
         :return: number of parameters in the circuit
         """

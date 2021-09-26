@@ -6,8 +6,8 @@ import tqdm.auto as tqdm
 import tensorflow as tf
 import tensorflow_quantum as tfq
 
-from qleet.interface.metas import AnalyzerList
-from qleet.interface.circuit import CircuitDescriptor
+from ..interface.metas import AnalyzerList
+from ..interface.circuit import CircuitDescriptor
 
 
 class PQCSimulatedTrainer:

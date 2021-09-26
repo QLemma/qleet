@@ -1,24 +1,19 @@
-import typing
-
 import networkx as nx
 
 import dash
 import dash_core_components as dash_core
 import dash_html_components as dash_html
 
-if typing.TYPE_CHECKING:
-    from qleet.interface.metas import AnalyzerList
-    from qleet.analyzers.loss_landscape import (
-        LossLandscapePlotter,
-        LossLandscapePathPlotter,
-    )
-    from qleet.analyzers.training_path import OptimizationPathPlotter
+from qleet.interface.metas import AnalyzerList
+from qleet.analyzers.loss_landscape import LossLandscapePlotter
+from qleet.analyzers.training_path import OptimizationPathPlotter
+from qleet.analyzers.training_path import LossLandscapePathPlotter
 
 
-def launch_dashboard(trainer):
-    plot = LossLandscapePlotter(qaoa, dim=2)
-    trainer.train(n_samples=5000)
-    fig_loss_surface = plot.plot("surface", points=25)
+def launch_dashboard(trainer, plottable_metric):
+    plot = LossLandscapePlotter(trainer, plottable_metric, dim=2)
+    trainer.train(n_samples=50)
+    fig_loss_surface = plot.plot("surface", points=5)
 
     trackers = AnalyzerList(
         LossLandscapePathPlotter(plot),
@@ -74,10 +69,11 @@ def launch_dashboard(trainer):
 if __name__ == "__main__":
     from qleet.interface.circuit import CircuitDescriptor
     from qleet.simulators.pqc_trainer import PQCSimulatedTrainer
-    from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut
+    from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut, MaxCutMetric
 
     graph = nx.gnm_random_graph(n=10, m=40)
     qaoa = QAOACircuitMaxCut(graph, p=1)
     circuit = CircuitDescriptor(qaoa.qaoa_circuit, qaoa.params, qaoa.qaoa_cost)
     solver = PQCSimulatedTrainer(circuit)
-    launch_dashboard(solver)
+    metric = MaxCutMetric(graph)
+    launch_dashboard(solver, metric)
