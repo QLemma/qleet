@@ -101,8 +101,7 @@ class CircuitDescriptor:
         """
         return self._params
 
-    @property
-    def shape(self) -> int:
+    def __len__(self) -> int:
         """Number of parameters in the variational circuit
         :return: number of parameters in the circuit
         """
@@ -123,7 +122,7 @@ class CircuitDescriptor:
         return convert_to_qiskit(self._circuit)
 
     @property
-    def num_qubits(self) -> qiskit.QuantumCircuit:
+    def num_qubits(self) -> int:
         """Get the number of qubits for a circuit
         :return: the number of qubits in the circuit
         :raises ValueError: if unsupported circuit framework is given

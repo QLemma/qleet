@@ -15,7 +15,7 @@ def test_cirq_simulator_state_vector():
             cirq.rx(params[1]).on(cirq.NamedQubit("q_1")),
         ]
     )
-    cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
@@ -38,7 +38,7 @@ def test_cirq_simulator_density_matrix():
             cirq.amplitude_damp(0.1).on(cirq.NamedQubit("q_1")),
         ]
     )
-    cirq_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=cirq_circuit, params=params, cost_function=cirq.PauliSum()
     )
     params = {p: np.random.random() * 2 * np.pi for p in cirq_descriptor.parameters}
@@ -62,7 +62,7 @@ def test_qiskit_simulator():
     qiskit_circuit.rx(params[0], 0)
     qiskit_circuit.cx(0, 1)
     qiskit_circuit.rx(params[1], 1)
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=cirq.PauliSum()
     )
 

@@ -11,8 +11,9 @@ from scipy.spatial.distance import jensenshannon
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qleet.utils.circuit import CircuitDescriptor
-from qleet.simulators.circuit_simulators import CircuitSimulator
+from ..interface.metas import MetaExplorer
+from ..interface.circuit import CircuitDescriptor
+from ..simulators.circuit_simulators import CircuitSimulator
 
 NOISE_MODELS = {
     "cirq": cirqNoiseModel,
@@ -21,7 +22,7 @@ NOISE_MODELS = {
 }
 
 
-class Expressibility:
+class Expressibility(MetaExplorer):
     """Calculates expressibility of a parameterized quantum circuit"""
 
     def __init__(
@@ -39,6 +40,7 @@ class Expressibility:
         :param samples: number of samples for the experiment
         :raises ValueError: If circuit and noise model does not correspond to same framework
         """
+        super().__init__()
         self.circuit = circuit
 
         if noise_model is not None:
@@ -55,21 +57,19 @@ class Expressibility:
 
         self.num_samples = samples
         self.expr = 0.0
-        self.plot_data = np.array([])
+        self.plot_data: typing.List[np.ndarray] = []
 
     @staticmethod
     def kl_divergence(prob_a: np.ndarray, prob_b: np.ndarray) -> float:
         """Returns KL divergence between two probabilities"""
         prob_a[prob_a == 0] = 1e-10
-        return np.sum(np.where(prob_a != 0, prob_a * np.log(prob_a / prob_b), 0))
+        kl_div = np.sum(np.where(prob_a != 0, prob_a * np.log(prob_a / prob_b), 0))
+        return typing.cast(float, kl_div)
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
-        Args:
-            samples (int): number of samples considered for the expressibility calculation
-        Return
-            theta (np.ndarray): first list of parameters for the parameterized quantum circuit
-            phi (np.ndarray): second list of parameters for the parameterized quantum circuit
+        :returns theta (np.array): first list of parameters for the parameterized quantum circuit
+        :returns phi (np.array): second list of parameters for the parameterized quantum circuit
         """
         theta = [
             {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
@@ -89,26 +89,23 @@ class Expressibility:
 
     def prob_pqc(self, shots: int = 1024) -> np.ndarray:
         """Return probability density function of fidelities for PQC
-        Args:
-            shots (int): number of shots for circuit execution
-        Return:
-            fidelities (np.ndarray): np.ndarray of fidelities
+        :param shots: number of shots for circuit execution
+        :returns fidelities (np.array): np.array of fidelities
         """
         thetas, phis = self.gen_params()
 
-        theta_circs = [
+        theta_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(theta, shots)
             for theta in thetas
         ]
-        phi_circs = [
+        phi_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(phi, shots)
             for phi in phis
         ]
-
         fidelity = np.array(
             [
-                state_fidelity(rhoa, rhob)
-                for rhoa, rhob in itertools.product(theta_circs, phi_circs)
+                state_fidelity(rho_a, rho_b)
+                for rho_a, rho_b in itertools.product(theta_circuits, phi_circuits)
             ]
         )
         return np.array(fidelity)
@@ -141,7 +138,7 @@ class Expressibility:
             pqc_expressibility = jensenshannon(pqc_prob, haar_prob, 2.0)
         else:
             raise ValueError("Invalid measure provided, choose from 'kld' or 'jsd'")
-        self.plot_data = np.array([haar_prob, pqc_prob, bin_edges])
+        self.plot_data = [haar_prob, pqc_prob, bin_edges]
         self.expr = pqc_expressibility
 
         return pqc_expressibility
@@ -161,7 +158,7 @@ class Expressibility:
         plt.bar(bin_middles, haar_prob, width=bin_width, label="Haar")
         plt.bar(bin_middles, pqc_prob, width=bin_width, label="PQC", alpha=0.6)
         plt.xlim((-0.05, 1.05))
-        plt.ylim(bottom=0.0, top=max(max(pqc_prob), max((haar_prob))) + 0.01)
+        plt.ylim(bottom=0.0, top=max(max(pqc_prob), max(haar_prob)) + 0.01)
         plt.grid(True)
         plt.title(f"Expressibility: {np.round(expr,5)}")
         plt.xlabel("Fidelity")

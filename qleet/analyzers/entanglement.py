@@ -10,8 +10,9 @@ from scipy.special import comb
 
 import numpy as np
 
-from qleet.utils.circuit import CircuitDescriptor
-from qleet.simulators.circuit_simulators import CircuitSimulator
+from ..interface.metas import MetaExplorer
+from ..interface.circuit import CircuitDescriptor
+from ..simulators.circuit_simulators import CircuitSimulator
 
 NOISE_MODELS = {
     "cirq": cirqNoiseModel,
@@ -20,7 +21,7 @@ NOISE_MODELS = {
 }
 
 
-class EntanglementCapability:
+class EntanglementCapability(MetaExplorer):
     """Calculates entangling capability of a parameterized quantum circuit"""
 
     def __init__(
@@ -40,6 +41,7 @@ class EntanglementCapability:
         :returns Entanglement object instance
         :raises ValueError: If circuit and noise model does not correspond to same framework
         """
+        super().__init__()
         self.circuit = circuit
 
         if noise_model is not None:
@@ -55,15 +57,11 @@ class EntanglementCapability:
             self.noise_model = None
 
         self.num_samples = samples
-        self.entgcap = 0
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
-        Args:
-            samples (int): number of samples considered for the expressibility calculation
-        Return
-            theta (np.ndarray): first list of parameters for the parameterized quantum circuit
-            phi (np.ndarray): second list of parameters for the parameterized quantum circuit
+        :return theta (np.array): first list of parameters for the parameterized quantum circuit
+        :return phi (np.array): second list of parameters for the parameterized quantum circuit
         """
         theta = [
             {p: 2 * np.random.random() * np.pi for p in self.circuit.parameters}
@@ -116,16 +114,16 @@ class EntanglementCapability:
             list(itertools.combinations(range(num_qubits), num_qubits - idx))
             for idx in m
         ]
-        combs = [1 / comb(num_qubits, idx) for idx in m]
-        contri = [2 ** idx / (2 ** idx - 1) for idx in m]
+        combinations = [1 / comb(num_qubits, idx) for idx in m]
+        contributions = [2 ** idx / (2 ** idx - 1) for idx in m]
         ns = []
 
         for ind, perm in enumerate(permutations):
             ns.append(
-                contri[ind]
+                contributions[ind]
                 * sum(
                     [
-                        1 - combs[ind] * self.scott_helper(state, perm)
+                        1 - combinations[ind] * self.scott_helper(state, perm)
                         for state in states
                     ]
                 )
@@ -146,11 +144,11 @@ class EntanglementCapability:
         """
         thetas, phis = self.gen_params()
 
-        theta_circs = [
+        theta_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(theta, shots)
             for theta in thetas
         ]
-        phi_circs = [
+        phi_circuits = [
             CircuitSimulator(self.circuit, self.noise_model).simulate(phi, shots)
             for phi in phis
         ]
@@ -159,16 +157,15 @@ class EntanglementCapability:
 
         if measure == "meyer-wallach":
             pqc_entanglement_capability = self.meyer_wallach_measure(
-                theta_circs + phi_circs, num_qubits
+                theta_circuits + phi_circuits, num_qubits
             ) / (2 * self.num_samples)
         elif measure == "scott":
             pqc_entanglement_capability = self.scott_measure(
-                theta_circs + phi_circs, num_qubits
+                theta_circuits + phi_circuits, num_qubits
             ) / (2 * self.num_samples)
         else:
             raise ValueError(
                 "Invalid measure provided, choose from 'meyer-wallach' or 'scott'"
             )
 
-        self.entgcap = pqc_entanglement_capability
         return pqc_entanglement_capability

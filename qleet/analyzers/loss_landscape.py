@@ -1,12 +1,15 @@
 import numpy as np
 import tqdm.auto as tqdm
-
 import plotly.graph_objects as pg
+
+from ..simulators.pqc_trainer import PQCSimulatedTrainer
+from ..interface.metric_spec import MetricSpecifier
 
 
 class LossLandscapePlotter:
-    def __init__(self, solver, dim=2):
-        self.n = len(solver)
+    def __init__(self, solver: PQCSimulatedTrainer, metric: MetricSpecifier, dim=2):
+        self.n = len(solver.circuit.parameters)
+        self.metric = metric
         self.solver = solver
         self.dim = dim
         self.axes = self.__random_subspace(dim=self.dim)
@@ -24,7 +27,7 @@ class LossLandscapePlotter:
 
     def scan(self, points, distance, origin):
         chained_range = [
-            np.linspace(-distance, distance, points) for i in range(self.dim)
+            np.linspace(-distance, distance, points) for _i in range(self.dim)
         ]
         coords = np.meshgrid(*chained_range)
         coords = np.reshape(np.stack(coords, axis=-1), (-1, self.dim))
@@ -32,7 +35,12 @@ class LossLandscapePlotter:
         with tqdm.trange(len(coords)) as iterator:
             iterator.set_description("Contour Plot Scan")
             for i in iterator:
-                values[i] = self.solver.compute_cost(coords[i] @ self.axes + origin)
+                # TODO: Incorporate state vector and density matrix modes for higher speed
+                values[i] = self.metric.from_circuit(
+                    circuit_descriptor=self.solver.circuit,
+                    parameters=coords[i] @ self.axes + origin,
+                    mode="samples",
+                )
         return values, coords
 
     def plot(self, mode="surface", points=25, distance=np.pi):

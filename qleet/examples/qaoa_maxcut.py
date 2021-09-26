@@ -1,9 +1,12 @@
 import itertools
+import typing
 
 import numpy as np
 import networkx as nx
 import sympy
 import cirq
+
+from ..interface.metric_spec import MetricSpecifier
 
 
 class QAOACircuitMaxCut:
@@ -52,3 +55,26 @@ class QAOACircuitMaxCut:
             for assignment in subsets_list
         ]
         return np.max(max_cut)
+
+
+class MaxCutMetric(MetricSpecifier):
+    def __init__(self, graph):
+        super().__init__("samples")
+        self.graph = graph
+
+    def from_samples_vector(self, samples_vector: np.ndarray) -> float:
+        return typing.cast(
+            float,
+            np.mean(
+                [
+                    nx.algorithms.cuts.cut_size(self.graph, np.where(cut)[0])
+                    for cut in samples_vector
+                ]
+            ),
+        )
+
+    def from_density_matrix(self, density_matrix: np.ndarray) -> float:
+        raise NotImplementedError
+
+    def from_state_vector(self, state_vector: np.ndarray) -> float:
+        raise NotImplementedError

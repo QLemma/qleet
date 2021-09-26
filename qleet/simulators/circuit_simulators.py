@@ -8,7 +8,7 @@ from qiskit.providers.aer.noise import NoiseModel as qiskitNoiseModel
 from cirq.devices.noise_model import NoiseModel as cirqNoiseModel
 from pyquil.noise import NoiseModel as pyquilNoiseModel
 
-import qleet
+from ..interface.circuit import CircuitDescriptor
 
 
 class CircuitSimulator:
@@ -16,7 +16,7 @@ class CircuitSimulator:
 
     def __init__(
         self,
-        circuit: qleet.utils.circuit.CircuitDescriptor,
+        circuit: CircuitDescriptor,
         noise_model: typing.Union[
             cirqNoiseModel, qiskitNoiseModel, pyquilNoiseModel, None
         ] = None,

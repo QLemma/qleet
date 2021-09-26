@@ -1,13 +1,7 @@
-import pytest
 import numpy as np
-
 import qiskit
-import cirq
-import pyquil
-from qiskit import QuantumCircuit
 
 import qleet
-from qleet.analyzers.entanglement import EntanglementCapability
 
 
 def test_entanglement_local():
@@ -16,13 +10,19 @@ def test_entanglement_local():
     qiskit_circuit = qiskit.QuantumCircuit(2)
     qiskit_circuit.x(0)
     qiskit_circuit.x(1)
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=None
     )
 
-    qiskit_entg_capability = EntanglementCapability(qiskit_descriptor, samples=100)
-    entg = qiskit_entg_capability.entanglement_capability("meyer-wallach")
-    assert np.isclose(entg, 0)
+    qiskit_entanglement_capability = (
+        qleet.analyzers.entanglement.EntanglementCapability(
+            qiskit_descriptor, samples=100
+        )
+    )
+    entanglement = qiskit_entanglement_capability.entanglement_capability(
+        "meyer-wallach"
+    )
+    assert np.isclose(entanglement, 0)
 
 
 def test_entanglement_non_local():
@@ -32,10 +32,16 @@ def test_entanglement_non_local():
     qiskit_circuit.rx(params[0], 0)
     qiskit_circuit.cx(0, 1)
     qiskit_circuit.rx(params[1], 1)
-    qiskit_descriptor = qleet.utils.circuit.CircuitDescriptor(
+    qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=None
     )
 
-    qiskit_entg_capability = EntanglementCapability(qiskit_descriptor, samples=100)
-    entg = qiskit_entg_capability.entanglement_capability("meyer-wallach")
-    assert entg > 0
+    qiskit_entanglement_capability = (
+        qleet.analyzers.entanglement.EntanglementCapability(
+            qiskit_descriptor, samples=100
+        )
+    )
+    entanglement = qiskit_entanglement_capability.entanglement_capability(
+        "meyer-wallach"
+    )
+    assert entanglement > 0

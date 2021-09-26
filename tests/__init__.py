@@ -1,17 +1,13 @@
 # pylint: disable=import-outside-toplevel,too-many-arguments
-import argparse
-import pathlib
-import subprocess
-import sys
 
 
 # determine if running in an interactive environment
-import __main__
+from qleet.interface import dashboard
 
 INTERACTIVE = False
 
 try:
-    __main__.__file__
+    dashboard.__file__
 except AttributeError:
     INTERACTIVE = True
 
