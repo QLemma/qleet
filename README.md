@@ -2,7 +2,7 @@
   <!-- Continious Integration -->
   <a href="https://github.com/QLemma/qleet/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="GitHub Actions status" src="https://img.shields.io/github/workflow/status/QLemma/qleet/Continuous%20Integration/master?logo=github&style=flat-square"></a>
   <!-- Read the Docs status -->
-  <a href="https://img.shields.io/readthedocs/qleet"><img alt="Read the Docs status" src="https://img.shields.io/readthedocs/qleet"></a>
+  <a href="https://qleet.readthedocs.io/en/latest/"><img alt="Read the Docs status" src="https://img.shields.io/readthedocs/qleet"></a>
   <!-- UnitaryFund Support -->
   <a href="http://unitary.fund"><img alt="Unitary Fund" src="https://img.shields.io/badge/Supported%20By-UNITARY%20FUND-brightgreen.svg?style=for-the-badge" width=175></a>
   <!-- PyPI -->
