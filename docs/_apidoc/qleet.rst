@@ -12,17 +12,6 @@ Subpackages
    qleet.interface
    qleet.simulators
 
-Submodules
-----------
-
-qleet.config module
--------------------
-
-.. automodule:: qleet.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

@@ -1,3 +1,5 @@
+"""Module to test the expressibility of circuits."""
+
 import itertools
 import typing
 
@@ -35,8 +37,7 @@ class Expressibility(MetaExplorer):
     ):
         """Constructor the the Expressibility analyzer
         :param circuit: input circuit as a CircuitDescriptor object
-        :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary for
-            generating noise model
+        :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary
         :param samples: number of samples for the experiment
         :raises ValueError: If circuit and noise model does not correspond to same framework
         """
@@ -113,7 +114,6 @@ class Expressibility(MetaExplorer):
     def expressibility(self, measure: str = "kld", shots: int = 1024) -> float:
         """Returns expressibility for the circuit
         :param measure: specification for the measure used in the expressibility calculation
-                           "kld" for KL divergence and "jsd" Jensen-Shannon divergence.
         :param shots: number of shots for circuit execution
         :returns pqc_expressibility: float, expressibility value
         :raises ValueError: if invalid measure is specified

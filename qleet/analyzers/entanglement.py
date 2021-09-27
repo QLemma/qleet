@@ -1,3 +1,5 @@
+"""Module to test the achievable entanglement in circuits."""
+
 import itertools
 import typing
 
@@ -83,13 +85,7 @@ class EntanglementCapability(MetaExplorer):
         return np.sum(trace).real
 
     def meyer_wallach_measure(self, states, num_qubits):
-        r"""Returns the meyer-wallach entanglement measure for the given circuit.
-
-        .. math::
-        Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}\Bigg(1-
-            \frac{1}{n}\sum_{k=1}^{n}Tr(\rho_{k}^{2}(\theta_{i}))\Bigg)
-
-        """
+        r"""Returns the meyer-wallach entanglement measure for the given circuit."""
         permutations = list(itertools.combinations(range(num_qubits), num_qubits - 1))
         ns = 2 * sum(
             [
@@ -101,14 +97,7 @@ class EntanglementCapability(MetaExplorer):
         return ns.real
 
     def scott_measure(self, states, num_qubits):
-        r"""Returns the scott entanglement measure for the given circuit.
-
-        .. math::
-        Q = \frac{1}{\lfloor N/2 \rfloor} \sum_{m=1}^{\lfloor N/2 \rfloor} Q_{m} \Rightarrow
-            \frac{1}{\lfloor N/2 \rfloor |\vec{\theta}|} \sum_{m=1}^{\lfloor N/2 \rfloor}
-            \frac{2^{m}}{2^{m}-1} \sum_{\theta_{i}\in \vec{\theta}}\Bigg( 1 -
-            \frac{m! (N-m)!}{N!} \sum_{|S|=m} Tr(\rho_{S}^{2}(\theta_{i}))  \Bigg)
-        """
+        r"""Returns the scott entanglement measure for the given circuit."""
         m = range(1, num_qubits // 2 + 1)
         permutations = [
             list(itertools.combinations(range(num_qubits), num_qubits - idx))
@@ -136,8 +125,6 @@ class EntanglementCapability(MetaExplorer):
     ) -> float:
         """Returns entanglement measure for the given circuit
         :param measure: specification for the measure used in the entangling capability
-                            calculation "meyer-wallach" for Meyer-Wallach measure and
-                           "scott" for Scott measure.
         :param shots: number of shots for circuit execution
         :returns pqc_entangling_capability (float): entanglement measure value
         :raises ValueError: if invalid measure is specified

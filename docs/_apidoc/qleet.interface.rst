@@ -28,6 +28,14 @@ qleet.interface.metas module
    :undoc-members:
    :show-inheritance:
 
+qleet.interface.metric\_spec module
+-----------------------------------
+
+.. automodule:: qleet.interface.metric_spec
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
