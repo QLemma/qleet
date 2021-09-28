@@ -36,6 +36,7 @@ class Expressibility(MetaExplorer):
         samples: int = 1000,
     ):
         """Constructor the the Expressibility analyzer
+
         :param circuit: input circuit as a CircuitDescriptor object
         :param noise_model:  (dict, NoiseModel) initialization noise-model dictionary
         :param samples: number of samples for the experiment
@@ -69,6 +70,7 @@ class Expressibility(MetaExplorer):
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
+
         :returns theta (np.array): first list of parameters for the parameterized quantum circuit
         :returns phi (np.array): second list of parameters for the parameterized quantum circuit
         """
@@ -90,6 +92,7 @@ class Expressibility(MetaExplorer):
 
     def prob_pqc(self, shots: int = 1024) -> np.ndarray:
         """Return probability density function of fidelities for PQC
+
         :param shots: number of shots for circuit execution
         :returns fidelities (np.array): np.array of fidelities
         """
@@ -112,7 +115,12 @@ class Expressibility(MetaExplorer):
         return np.array(fidelity)
 
     def expressibility(self, measure: str = "kld", shots: int = 1024) -> float:
-        """Returns expressibility for the circuit
+        r"""Returns expressibility for the circuit
+
+        .. math::
+            Expr = D_{KL}(\hat{P}_{PQC}(F; \theta) | P_{Haar}(F))\\
+            Expr = D_{\sqrt{JSD}}(\hat{P}_{PQC}(F; \theta) | P_{Haar}(F))
+
         :param measure: specification for the measure used in the expressibility calculation
         :param shots: number of shots for circuit execution
         :returns pqc_expressibility: float, expressibility value
