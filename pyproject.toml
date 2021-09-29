@@ -1,0 +1,10 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "qLEET"
+authors = [
+    {name = "Animesh Sinha", email = "animesh.sinha@research.iiit.ac.in"},
+    {name = "Utkarsh Azad", email = "utkarsh.azad@research.iiit.ac.in"}]
+dynamic = ["version", "description"]

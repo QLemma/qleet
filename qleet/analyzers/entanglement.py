@@ -1,3 +1,5 @@
+"""Module to test the achievable entanglement in circuits."""
+
 import itertools
 import typing
 
@@ -60,6 +62,7 @@ class EntanglementCapability(MetaExplorer):
 
     def gen_params(self) -> typing.Tuple[typing.List, typing.List]:
         """Generate parameters for the calculation of expressibility
+
         :return theta (np.array): first list of parameters for the parameterized quantum circuit
         :return phi (np.array): second list of parameters for the parameterized quantum circuit
         """
@@ -86,8 +89,8 @@ class EntanglementCapability(MetaExplorer):
         r"""Returns the meyer-wallach entanglement measure for the given circuit.
 
         .. math::
-        Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}\Bigg(1-
-            \frac{1}{n}\sum_{k=1}^{n}Tr(\rho_{k}^{2}(\theta_{i}))\Bigg)
+            Q = \frac{2}{|\vec{\theta}|}\sum_{\theta_{i}\in \vec{\theta}}
+            \Bigg(1-\frac{1}{n}\sum_{k=1}^{n}Tr(\rho_{k}^{2}(\theta_{i}))\Bigg)
 
         """
         permutations = list(itertools.combinations(range(num_qubits), num_qubits - 1))
@@ -97,17 +100,16 @@ class EntanglementCapability(MetaExplorer):
                 for state in states
             ]
         )
-        print(permutations)
         return ns.real
 
     def scott_measure(self, states, num_qubits):
         r"""Returns the scott entanglement measure for the given circuit.
 
         .. math::
-        Q = \frac{1}{\lfloor N/2 \rfloor} \sum_{m=1}^{\lfloor N/2 \rfloor} Q_{m} \Rightarrow
-            \frac{1}{\lfloor N/2 \rfloor |\vec{\theta}|} \sum_{m=1}^{\lfloor N/2 \rfloor}
-            \frac{2^{m}}{2^{m}-1} \sum_{\theta_{i}\in \vec{\theta}}\Bigg( 1 -
-            \frac{m! (N-m)!}{N!} \sum_{|S|=m} Tr(\rho_{S}^{2}(\theta_{i}))  \Bigg)
+            Q_{m} = \frac{2^{m}}{(2^{m}-1) |\vec{\theta}|}\sum_{\theta_i \in \vec{\theta}}\
+            \bigg(1 - \frac{m! (n-m)!)}{n!}\sum_{|S|=m} \text{Tr} (\rho_{S}^2 (\theta_i)) \bigg)\
+            \quad m= 1, \ldots, \lfloor n/2 \rfloor
+
         """
         m = range(1, num_qubits // 2 + 1)
         permutations = [
@@ -135,9 +137,8 @@ class EntanglementCapability(MetaExplorer):
         self, measure: str = "meyer-wallach", shots: int = 1024
     ) -> float:
         """Returns entanglement measure for the given circuit
+
         :param measure: specification for the measure used in the entangling capability
-                            calculation "meyer-wallach" for Meyer-Wallach measure and
-                           "scott" for Scott measure.
         :param shots: number of shots for circuit execution
         :returns pqc_entangling_capability (float): entanglement measure value
         :raises ValueError: if invalid measure is specified
