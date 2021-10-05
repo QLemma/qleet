@@ -19,7 +19,7 @@
 
 qLEET is an open-source library for exploring ***Loss landscape***, ***Expressibility***, ***Entangling capability*** and ***Training trajectories*** of noisy parameterized quantum circuits. 
 
-This project is supported by Unitary Fund. 
+This project is supported by [Unitary Fund](https://unitary.fund/). 
 
 ## Features
 
