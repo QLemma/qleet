@@ -12,6 +12,8 @@ class MetricSpecifier(abc.ABC):
     """Class to specify classical metrics which are a function of the sampled quantum state.
     Examples would be an arbitrary cost function, Mean Squared Error for some regression task,
     size of the max cut, etc.
+
+    This is an abstract class, all metrics should be it's subclasses
     """
 
     def __init__(self, default_call_mode="samples") -> None:
@@ -39,6 +41,8 @@ class MetricSpecifier(abc.ABC):
         :param parameters: List of values of the parameters to sample the circuit at
         :param mode: From what to compute the metric, samples, state_vector, or density_matrix
         :return: The value of the metric at those parameters
+        :raises NotImplementedError: if required mode of evaluating metric wasn't implemented
+        :raises ValueError: if the mode specified wasn't valid
         """
         if mode == "samples":
             samples = sample_solutions(

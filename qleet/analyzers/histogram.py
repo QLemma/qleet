@@ -17,7 +17,7 @@ class ParameterHistograms(MetaExplorer):
         circuit: CircuitDescriptor,
         ensemble_size: int = 3,
         groups: typing.Optional[typing.Dict[str, typing.List[sympy.Symbol]]] = None,
-        epochs_chart=(0, 100, 100),
+        epochs_chart=(0, 10, 10),
     ) -> None:
         """Creates an explorer object which will plot the histogram.
         :param circuit: The Parametrized Quantum circuit
@@ -35,8 +35,9 @@ class ParameterHistograms(MetaExplorer):
         if groups is not None:
             self.groups = groups
         else:
+            self.groups = dict()
             for param in circuit.parameters:
-                self.groups[param.name] = param
+                self.groups[param.name] = [param]
         # Prepare the array to store histograms resulting from simulation
         self._histograms: typing.Dict[str, typing.List[typing.List]] = {
             group: [[] for _ in self.epochs_chart] for group in self.groups.keys()
@@ -44,13 +45,13 @@ class ParameterHistograms(MetaExplorer):
 
     def simulate(self) -> None:
         """Simulates the circuit and generate the histogram data."""
-        for epochs_to_train in self.epochs_chart:
+        for epochs_idx, epochs_to_train in enumerate(self.epochs_chart):
             for model in self.models:
                 model.train(n_samples=epochs_to_train)
             for group_name, group_symbols in self.groups.items():
-                for model_idx, model in enumerate(self.models):
+                for model in self.models:
                     for variable in group_symbols:
-                        self._histograms[group_name][model_idx].append(
+                        self._histograms[group_name][epochs_idx].append(
                             self._get_symbol_value_from_model(model, variable)
                         )
 
@@ -68,16 +69,17 @@ class ParameterHistograms(MetaExplorer):
         :return: The axes with the completed plots
         """
         self.simulate()
-        fig, ax = plt.subplots(
+        _fig, ax = plt.subplots(
             len(self.epochs_chart),
             len(self.groups),
             figsize=(len(self.groups) * 5, len(self.epochs_chart) * 5),
         )
         for group_idx, group_name in enumerate(self.groups.keys()):
             for epoch_idx in range(len(self.epochs_chart)):
-                sns.histplot(
-                    self._histograms[group_name][epoch_idx], ax=ax[group_idx, epoch_idx]
+                sns.kdeplot(
+                    self._histograms[group_name][epoch_idx],
+                    ax=ax[epoch_idx, group_idx],
                 )
-                ax[group_idx, epoch_idx].set_title(f"{group_name} @ epoch:{epoch_idx}")
-                ax[group_idx, epoch_idx].set_xlabel(f"Parameter Values")
+                ax[epoch_idx, group_idx].set_title(f"{group_name} @ epoch:{epoch_idx}")
+                ax[epoch_idx, group_idx].set_xlabel(f"Parameter Values")
         return ax

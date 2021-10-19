@@ -23,10 +23,7 @@ class PQCSimulatedTrainer:
             differentiator=tfq.differentiators.Adjoint(),
         )
         self.model = tf.keras.models.Sequential(
-            [
-                tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
-                self.pqc_layer
-            ]
+            [tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string), self.pqc_layer]
         )
         self.circuit = circuit
 
