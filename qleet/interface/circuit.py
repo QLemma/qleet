@@ -1,3 +1,17 @@
+"""This module provides the interface to the circuits that the user specifies and library uses.
+
+This makes the abstractions which ensures all operations in the library are
+backend agnostic, by allowing us to get the circuit back in the desired library's
+form, cirq, qiskit or pytket. It allows the user to specify the circuit in any
+form. It also takes the loss function specification as a Pauli String.
+
+It also exposes functions that the user can use to convert their circuits to a
+qiskit or cirq backend.
+WARNING: the conversion is done through a OpenQASM intermediate, operations not
+supported on QASM cannot be converted directly, please provide your circuit in a
+Cirq or Qiskit backend in that case.
+"""
+
 import typing
 
 import numpy as np
@@ -17,8 +31,10 @@ def convert_to_cirq(
     circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]
 ) -> cirq.Circuit:
     """Converts any circuit to cirq
+    :type circuit: Circuit in any supported library
     :param circuit: input circuit in any framework
     :return: circuit in cirq
+    :rtype: cirq.Circuit
     :raises ValueError: if the circuit is not from one of the supported frameworks
     """
     if isinstance(circuit, cirq.Circuit):
@@ -37,9 +53,11 @@ def convert_to_qiskit(
     circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]
 ) -> qiskit.QuantumCircuit:
     """Converts any circuit to qiskit
+    :type circuit: Circuit in any supported library
     :param circuit: input circuit in any framework
     :raises ValueError: if the circuit is not from one of the supported frameworks
     :return: circuit in qiskit
+    :rtype: qiskit.QuantumCircuit
     """
     if isinstance(circuit, cirq.Circuit):
         return qiskit.QuantumCircuit.from_qasm_str(circuit.to_qasm())
@@ -54,7 +72,17 @@ def convert_to_qiskit(
 
 
 class CircuitDescriptor:
-    """The interface for users to provide a circuit in any framework and visualize it in qLEET."""
+    """The interface for users to provide a circuit in any framework and visualize it in qLEET.
+
+    It consists of 3 parts:
+    * Circuit: which has the full ansatz preparation from the start where
+    * Params: list of parameters which are used to parameterize the circuit
+    * Cost Function: presently a pauli string, which we measure to get the
+        output we are optimizing over
+
+    Combined they form the full the parameterized quantum circuit from the initial qubits to the end
+    measurement.
+    """
 
     def __init__(
         self,
@@ -64,12 +92,31 @@ class CircuitDescriptor:
             cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None
         ] = None,
     ):
+        """Constructor for the CircuitDescriptor
+
+        :type circuit: Circuit in any supported library
+        :param circuit: The full circuit which generates the required quantum state
+        :type params: list[sympy.Symbol]
+        :param params: The list of parameters to optimize over
+        :type cost_function: PauliSum in any supported library
+        :param cost_function: The measurement operation as a PauliString
+
+        If you are not providing the full list of parameters of the circuit because
+        you don't want to optimize over some of those parameters, because use a
+        Parameter Resolver to resolve those parameter values before you pass in the
+        lists. The list of parameters passed in here ought to be complete.
+        """
         self._circuit = circuit
         self._params = params
         self._cost = cost_function
 
     @property
-    def default_backend(self):
+    def default_backend(self) -> str:
+        """Returns the backend in which the user had provided the circuit.
+        :returns: The name of the default backend
+        :rtype: str
+        :raises ValueError: if the given circuit is not from a supported library
+        """
         if isinstance(self._circuit, cirq.Circuit):
             return "cirq"
         elif isinstance(self._circuit, qiskit.QuantumCircuit):
@@ -80,12 +127,24 @@ class CircuitDescriptor:
             raise ValueError("Unsupported framework of circuit")
 
     @classmethod
-    def from_qasm(cls, qasm_str: str, params, cost_function):
+    def from_qasm(
+        cls,
+        qasm_str: str,
+        params: typing.List[typing.Union[sympy.Symbol, qiskit.circuit.Parameter]],
+        cost_function: typing.Union[
+            cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None
+        ],
+    ):
         """Generate the descriptor from OpenQASM string
-        :param qasm_str:OpenQASM string for each part of the circuit
-        :param params: list of sympy symbols which act as parameters
+
+        :type qasm_str: str
+        :param qasm_str: OpenQASM string for each part of the circuit
+        :type params: list[sympy.Symbol]
+        :param params: list of sympy symbols which act as parameters for the PQC
+        :type cost_function: PauliSum
         :param cost_function: pauli-string operator to implement cost function
         :return: The CircuitDescriptor object
+        :rtype: CircuitDescriptor
         """
         cirq_circuit = circuit_from_qasm(qasm_str)
         return CircuitDescriptor(
@@ -111,6 +170,7 @@ class CircuitDescriptor:
     def cirq_circuit(self) -> cirq.Circuit:
         """Get the circuit in cirq
         :return: the cirq representation of the circuit
+        :rtype: cirq.Circuit
         """
         return convert_to_cirq(self._circuit)
 
@@ -118,6 +178,7 @@ class CircuitDescriptor:
     def qiskit_circuit(self) -> qiskit.QuantumCircuit:
         """Get the circuit in qiskit
         :return: the cirq representation of the circuit
+        :rtype: qiskit.QuantumCircuit
         """
         return convert_to_qiskit(self._circuit)
 
@@ -125,6 +186,7 @@ class CircuitDescriptor:
     def num_qubits(self) -> int:
         """Get the number of qubits for a circuit
         :return: the number of qubits in the circuit
+        :rtype: int
         :raises ValueError: if unsupported circuit framework is given
         """
         if isinstance(self._circuit, cirq.Circuit):
@@ -155,6 +217,7 @@ class CircuitDescriptor:
             raise ValueError("Cost object should be a Pauli-Sum object")
 
     def __eq__(self, other: typing.Any) -> bool:
+        """Checks equality between a CircuitDescriptor and another object"""
         if isinstance(other, CircuitDescriptor):
             return (
                 np.array_equal(self.parameters, other.parameters)
@@ -164,7 +227,18 @@ class CircuitDescriptor:
             return False
 
     def __repr__(self) -> str:
+        """Prints the representation of the CircuitDescriptor
+        You can eval this to get the object back.
+
+        :returns: The repr string
+        :rtype: str
+        """
         return f"qleet.CircuitDescriptor({repr(self._circuit)}, {repr(self._params)})"
 
     def __str__(self) -> str:
+        """Prints the string form of the CircuitDescriptor
+
+        :returns: The string form
+        :rtype: str
+        """
         return f"qleet.CircuitDescriptor({repr(self._circuit)})"

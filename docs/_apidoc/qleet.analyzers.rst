@@ -36,6 +36,14 @@ qleet.analyzers.training\_path module
    :undoc-members:
    :show-inheritance:
 
+qleet.analyzers.histogram module
+-------------------------------------
+
+.. automodule:: qleet.analyzers.histogram
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
