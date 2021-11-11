@@ -1,3 +1,5 @@
+"""Module to draw samples from the circuit, for computing properties of the circuit like Entanglability and Expressibility."""
+
 import typing
 
 import cirq
@@ -20,9 +22,11 @@ class CircuitSimulator:
         noise_model: typing.Union[
             cirqNoiseModel, qiskitNoiseModel, pyquilNoiseModel, None
         ] = None,
-    ):
+    ) -> None:
         """Initialize the state simulator
+        :type circuit: CircuitDescriptor
         :param circuit: the target circuit to simulate
+        :type noise_model: Noise model as a dict or in the library format
         :param noise_model: the noise model as dict or empty dict for density matrix simulations,
             None if performing state vector simulations
         """
@@ -36,6 +40,7 @@ class CircuitSimulator:
     ) -> typing.Optional[np.ndarray]:
         """Get the results stored from the circuit simulator
         :return: stored result of the circuit simulation if it has been performed, else None.
+        :rtype: np.array or None
         """
         return self._result
 
@@ -45,9 +50,12 @@ class CircuitSimulator:
         shots: int = 1024,
     ) -> np.ndarray:
         """Simulate to get the state vector or the density matrix
+        :type param_resolver: Dict to resolve all parameters to a static float value
         :param param_resolver: a dictionary of all the symbols/parameters mapping to their values
+        :type shots: int
         :param shots: number of times to run the qiskit density matrix simulator
         :returns: state vector or density matrix resulting from the simulation
+        :rtype: np.array
         :raises NotImplementedError: if circuit simulation is not supported for a backend
         """
         if self.circuit.default_backend == "qiskit":

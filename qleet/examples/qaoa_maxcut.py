@@ -1,3 +1,5 @@
+"""Implements an example of QAOA for Max Cut, and allows the user to analyze QAOA with no setup for any graph."""
+
 import itertools
 import typing
 
@@ -10,7 +12,15 @@ from ..interface.metric_spec import MetricSpecifier
 
 
 class QAOACircuitMaxCut:
+    """The class to specify a QAOA circuit and metric for computing Max Cut of a graph."""
+
     def __init__(self, graph: nx.Graph = None, p: int = 2):
+        """Constructor for the QAOA problem for Max Cut computation
+        :type graph: nx.Graph
+        :param graph: The graph for which we want to compute the max-cut
+        :type p: int
+        :param p: The number of blocks of the QAOA circuit
+        """
         self._graph = nx.gnm_random_graph(n=6, m=15) if graph is None else graph
         self._qubits = cirq.GridQubit.rect(1, self._graph.number_of_nodes())
         self.params = sympy.symbols("q0:%d" % (2 * p))
@@ -45,6 +55,7 @@ class QAOACircuitMaxCut:
     def solve_classically(self):
         """Solve the combinatorial problem using a full, exponentially sized search
         :return: Value of the max the cut
+        :rtype: float
         """
         subsets_list = itertools.chain.from_iterable(
             itertools.combinations(self._graph.nodes(), r)
@@ -58,11 +69,23 @@ class QAOACircuitMaxCut:
 
 
 class MaxCutMetric(MetricSpecifier):
+    """The metric for the Max Cut problem, generates using a classical process."""
+
     def __init__(self, graph):
+        """Constructs the class which can be called to generate the metric.
+        :type: networkx.Graph
+        :param graph: The graph for which we are computing the max-cut
+        """
         super().__init__("samples")
         self.graph = graph
 
     def from_samples_vector(self, samples_vector: np.ndarray) -> float:
+        """Computes the vector from the samples vector output from the quantum circuit.
+        :type samples_vector: np.array, 2-D matrix of size (num_samples, n)
+        :param samples_vector: `num_samples` measurements each of size `n`, as a 2-D matrix
+        :returns: The value of the max-cut
+        :rtype: float
+        """
         return typing.cast(
             float,
             np.mean(
@@ -74,7 +97,21 @@ class MaxCutMetric(MetricSpecifier):
         )
 
     def from_density_matrix(self, density_matrix: np.ndarray) -> float:
+        """Computes the vector from the samples vector output from the quantum circuit.
+        :type density_matrix: np.array, 2-D matrix of size (2^n, 2^n)
+        :param density_matrix: The 2-D density matrix to generate the output metric
+        :returns: The value of the max-cut
+        :rtype: float
+        :raises NotImplemetedError: Computing from density-matrix is not implemented yet
+        """
         raise NotImplementedError
 
     def from_state_vector(self, state_vector: np.ndarray) -> float:
+        """Computes the vector from the samples vector output from the quantum circuit.
+        :type state_vector: np.array, 2-D matrix of size (2^n,)
+        :param state_vector: The 2-D state vector to generate the output metric
+        :returns: The value of the max-cut
+        :rtype: float
+        :raises NotImplemetedError: Computing from density-matrix is not implemented yet
+        """
         raise NotImplementedError
