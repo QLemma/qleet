@@ -1,13 +1,15 @@
-"""This module provides the interface to the circuits that the user specifies and the backend uses.
+"""This module provides the interface to the circuits that the user specifies and library uses.
 
-This makes the abstractions which ensures all operations in the library are backend agnostic,
-by allowing us to get the circuit back in the desired library's form, cirq, qiskit or pytket.
-It allows the user to specify the circuit in any form. It also takes the loss function specification
-as a Pauli String.
+This makes the abstractions which ensures all operations in the library are
+backend agnostic, by allowing us to get the circuit back in the desired library's
+form, cirq, qiskit or pytket. It allows the user to specify the circuit in any
+form. It also takes the loss function specification as a Pauli String.
 
-It also exposes functions that the user can use to convert their circuits to a qiskit or cirq backend.
-WARNING: the conversion is done through a OpenQASM intermediate, operations not supported on QASM cannot
-be converted directly, please provide your circuit in a Cirq or Qiskit backend in that case.
+It also exposes functions that the user can use to convert their circuits to a
+qiskit or cirq backend.
+WARNING: the conversion is done through a OpenQASM intermediate, operations not
+supported on QASM cannot be converted directly, please provide your circuit in a
+Cirq or Qiskit backend in that case.
 """
 
 import typing
@@ -71,11 +73,12 @@ def convert_to_qiskit(
 
 class CircuitDescriptor:
     """The interface for users to provide a circuit in any framework and visualize it in qLEET.
-    
+
     It consists of 3 parts:
-    * Circuit: which has the full ansatz preparation from the start where all qubits are uninitialized
+    * Circuit: which has the full ansatz preparation from the start where
     * Params: list of parameters which are used to parameterize the circuit
-    * Cost Function: presently a pauli string, which we measure to get the output we are optimizing over
+    * Cost Function: presently a pauli string, which we measure to get the
+        output we are optimizing over
 
     Combined they form the full the parameterized quantum circuit from the initial qubits to the end
     measurement.
@@ -90,7 +93,7 @@ class CircuitDescriptor:
         ] = None,
     ):
         """Constructor for the CircuitDescriptor
-        
+
         :type circuit: Circuit in any supported library
         :param circuit: The full circuit which generates the required quantum state
         :type params: list[sympy.Symbol]
@@ -98,10 +101,10 @@ class CircuitDescriptor:
         :type cost_function: PauliSum in any supported library
         :param cost_function: The measurement operation as a PauliString
 
-        If you are not providing the full list of parameters of the circuit because you don't want
-        to optimize over some of those parameters, because use a Parameter Resolver to resolve those
-        parameter values before you pass in the lists. The list of parameters passed in here ought to
-        be complete.
+        If you are not providing the full list of parameters of the circuit because
+        you don't want to optimize over some of those parameters, because use a
+        Parameter Resolver to resolve those parameter values before you pass in the
+        lists. The list of parameters passed in here ought to be complete.
         """
         self._circuit = circuit
         self._params = params
@@ -112,6 +115,7 @@ class CircuitDescriptor:
         """Returns the backend in which the user had provided the circuit.
         :returns: The name of the default backend
         :rtype: str
+        :raises ValueError: if the given circuit is not from a supported library
         """
         if isinstance(self._circuit, cirq.Circuit):
             return "cirq"
@@ -124,13 +128,15 @@ class CircuitDescriptor:
 
     @classmethod
     def from_qasm(
-        cls, 
-        qasm_str: str, 
+        cls,
+        qasm_str: str,
         params: typing.List[typing.Union[sympy.Symbol, qiskit.circuit.Parameter]],
-        cost_function: typing.Union[cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None],
+        cost_function: typing.Union[
+            cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None
+        ],
     ):
         """Generate the descriptor from OpenQASM string
-        
+
         :type qasm_str: str
         :param qasm_str: OpenQASM string for each part of the circuit
         :type params: list[sympy.Symbol]

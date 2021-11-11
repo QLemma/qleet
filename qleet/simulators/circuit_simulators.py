@@ -1,4 +1,6 @@
-"""Module to draw samples from the circuit, for computing properties of the circuit like Entanglability and Expressibility."""
+"""Module to draw samples from the circuit.
+Used for computing properties of the circuit like Entanglability and Expressibility.
+"""
 
 import typing
 

@@ -1,12 +1,13 @@
 """Module responsible to generating plots of the training trajectory.
 
-The training trajectory is the set of parameter values (projected down to some low dimensional space)
-that the model had through the different epochs of it's training process. This when plotted for one
-model tells us if the loss was decreasing always, if the learning rate should be lowered, increased, or
-what the schedule should look like, etc. When plotted for more than one model, it let's us know if the
-paths are converging or not, giving us a view of how likely is our generated solution optimal. If
-many of the models converge to the same path and start mixing, then they likely are optimal, if not they
-they are more likely to be just random chance solutions. 
+The training trajectory is the set of parameter values (projected down to some low
+dimensional space) that the model had through the different epochs of it's training
+process. This when plotted for one model tells us if the loss was decreasing always,
+if the learning rate should be lowered, increased, or what the schedule should look
+like, etc. When plotted for more than one model, it let's us know if the paths are
+converging or not, giving us a view of how likely is our generated solution optimal.
+If many of the models converge to the same path and start mixing, then they likely
+are optimal, if not they they are more likely to be just random chance solutions.
 """
 
 import typing as ty
@@ -19,14 +20,12 @@ import plotly.graph_objects as pg
 
 from .loss_landscape import LossLandscapePlotter
 from ..interface.metas import MetaLogger
-
-if ty.TYPE_CHECKING:
-    from ..simulators.pqc_trainer import PQCSimulatedTrainer
+from ..simulators.pqc_trainer import PQCSimulatedTrainer
 
 
 class OptimizationPathPlotter(MetaLogger):
     """Class which logs the parameter information and plots it over the iterations of training.
-    
+
     This will be used to plot the parameter values in 2-D or 3-D, rather a t-SNE or PCA projection
     or the parameter values. For getting the loss values for the associated training points as a
     part of the plot too, see `LossLandscapePathPlotter`.
@@ -37,7 +36,7 @@ class OptimizationPathPlotter(MetaLogger):
 
     def __init__(self, mode: str = "tSNE"):
         """Constructs the Path Plotter object.
-        
+
         :type mode: str
         :param mode: The type of projection we use to show the plots in lower dimensions
         """
@@ -48,7 +47,7 @@ class OptimizationPathPlotter(MetaLogger):
         ], "Mode of Dimensionality Reduction is not implemented, use PCA or tSNE."
         self.dimensionality_reduction = TSNE if mode == "tSNE" else PCA
 
-    def log(self, solver: 'PQCSimulatedTrainer', _loss: float) -> None:
+    def log(self, solver: PQCSimulatedTrainer, _loss: float) -> None:
         """Logs the value of the parameters that the circuit currently has.
         The parameter values should be a numpy vector.
 
@@ -66,7 +65,7 @@ class OptimizationPathPlotter(MetaLogger):
         """Plots the 2D parameter projections.
         For the entire set of runs, the class has logged the parameter values.
         Now it reduces the dimensionality of those parameter vectors using PCA or tSNE
-        and then plots them on a 2D plane. 
+        and then plots them on a 2D plane.
 
         :returns: The figure on which the parameter projections are plotted
         :rtype: Plotly figure
@@ -88,14 +87,15 @@ class OptimizationPathPlotter(MetaLogger):
 
 class LossLandscapePathPlotter(MetaLogger):
     """An module to plot the training path of the PQC on the loss landscape
-    
+
     This class is an extension of the Loss Landscape plotter and the Training
     Path plotter, puts both the ideas together and shows how the different models
-    ended us at different parts of the loss landscape. 
+    ended us at different parts of the loss landscape.
     """
 
     def __init__(self, base_plotter: LossLandscapePlotter):
-        """
+        """Constructor for the LossLandscapePathPlotter.
+
         :type base_plotter: LossLandscapePlotter
         :param base_plotter: The loss landscape plotter to plot the training path on top of
         """
@@ -103,7 +103,7 @@ class LossLandscapePathPlotter(MetaLogger):
         self.loss: ty.List[float] = []
         self.plotter = base_plotter
 
-    def log(self, solver: 'PQCSimulatedTrainer', loss: float):
+    def log(self, solver: "PQCSimulatedTrainer", loss: float):
         """Logs the value of the parameters that the circuit currently has.
         The parameter values should be a numpy vector.
 

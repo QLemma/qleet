@@ -43,8 +43,8 @@ class ParameterHistograms(MetaExplorer):
         :param epochs_chart: The list of number of epochs in each block
 
         The epochs chart presents the number of iterations of training in each block, after each
-        block of all the models we shall plot the histograms of the parameters, so the plotting is not
-        done after every single epochs and the spacing is left customizable to the user.
+        block of all the models we shall plot the histograms of the parameters, so the plotting
+        is not done after every single epochs and the spacing is left customizable to the user.
 
         The parameter groups have associated group names which are the keys of the dictionary, we
         use them to label the plots.
@@ -71,7 +71,7 @@ class ParameterHistograms(MetaExplorer):
 
     def simulate(self) -> None:
         """Simulates the circuit and generate the histogram data.
-        
+
         This is training an ensemble of models for the same number of epochs,
         which is extracted from the epochs chart property. After each block of training
         of all the models, the parameter are extracted and stored to be plotted later.
@@ -87,7 +87,9 @@ class ParameterHistograms(MetaExplorer):
                         )
 
     @staticmethod
-    def _get_symbol_value_from_model(model: PQCSimulatedTrainer, symbol: sympy.Symbol) -> float:
+    def _get_symbol_value_from_model(
+        model: PQCSimulatedTrainer, symbol: sympy.Symbol
+    ) -> float:
         """Get the current value of the symbol in the PQC Trainer
 
         :type model: PQCSimulatedTrainer
@@ -104,8 +106,8 @@ class ParameterHistograms(MetaExplorer):
         The plots are layed out with the different epochs of training along one axis and
         the different parameter groups on the other. All the values of the same parameter
         group for the same epoch block over all the models are in the ensemble are plotted
-        in a single histogram. 
-        
+        in a single histogram.
+
         :return: The axes with the completed plots
         :rtype: plt.Axes
 

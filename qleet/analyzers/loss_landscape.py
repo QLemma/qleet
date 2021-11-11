@@ -7,7 +7,7 @@ also helps visualize how rough the landscape is giving clues on how likely the
 variational models might converge.
 
 We hope that these visualizations can help improve the choice of optimizers and
-ansatz we have for these quantum circuits. 
+ansatz we have for these quantum circuits.
 """
 
 import typing as ty
@@ -21,8 +21,7 @@ from ..interface.metric_spec import MetricSpecifier
 
 
 class LossLandscapePlotter:
-    """
-    This class plots the loss landscape for a given PQC trainer object.
+    """This class plots the loss landscape for a given PQC trainer object.
 
     It can plot the true loss that we are training on or on some other metric, this can help
     use proxy metrics as loss functions and seeing if they help optimize on the true target
@@ -33,7 +32,9 @@ class LossLandscapePlotter:
     by v1.0.0 and onwards, which will use colors and point density to show the metric values.
     """
 
-    def __init__(self, solver: PQCSimulatedTrainer, metric: MetricSpecifier, dim: int = 2) -> None:
+    def __init__(
+        self, solver: PQCSimulatedTrainer, metric: MetricSpecifier, dim: int = 2
+    ) -> None:
         """Initializes the Loss Landscape plotter.
         The plotter takes a PQC trainer, which will expose the it's present parameters
         and help us sample the outputs of the circuit, be it classical or use the quantum state
@@ -42,11 +43,12 @@ class LossLandscapePlotter:
         trained optima.
 
         :type solver: PQCSimulatedTrainer
-        :param solver: The PQC trainer class, which contains both the 
+        :param solver: The PQC trainer class, which contains both the
         :type metric: MetricSpecifier
         :param metric: The metric which is being plotted for different parameter values
         :type dim: int
-        :param dim: The number of dimensions of the subspace to be sampled, necessarily 2 to get a contour plot
+        :param dim: The number of dimensions of the subspace to be sampled,
+            necessarily 2 to get a contour plot
         """
         self.n = len(solver.circuit.parameters)
         self.metric = metric
@@ -57,7 +59,7 @@ class LossLandscapePlotter:
     def __random_subspace(self, dim: int) -> np.ndarray:
         """Generates basis vectors for a random subspace
         Performs Gram-Schmidt orthonormalization to generate this set.
-    
+
         :type dim: int
         :param dim: The number of dimensions the subspace should have
         :returns: The basis set of vectors for our subspace as a 2D numpy matrix
@@ -65,7 +67,7 @@ class LossLandscapePlotter:
         Note that this only works for Real valued vectors, there are issues with doing this for
         complex vectors to generate unitary matrices, use a different approach for that.
         """
-        axes = []
+        axes: ty.List[np.ndarray] = []
         for _i in range(dim):
             axis = np.random.random(self.n)
             for other_axis in axes:
@@ -75,7 +77,9 @@ class LossLandscapePlotter:
             axes.append(axis)
         return np.stack(axes, axis=0)
 
-    def scan(self, points: int, distance: float, origin: np.ndarray) -> ty.Tuple[np.ndarray, np.ndarray]:
+    def scan(
+        self, points: int, distance: float, origin: np.ndarray
+    ) -> ty.Tuple[np.ndarray, np.ndarray]:
         """Scans the target vector-subspace for values of the metric
         Returns the sampled coordinates in the grid and the values of the metric at those
         coordinates. The sampling of the subspace is done uniformly, and evenly in all directions.
@@ -106,11 +110,13 @@ class LossLandscapePlotter:
                 )
         return values, coords
 
-    def plot(self, mode: str = "surface", points: int = 25, distance: float = np.pi) -> pg.Figure:
+    def plot(
+        self, mode: str = "surface", points: int = 25, distance: float = np.pi
+    ) -> pg.Figure:
         """Plots the loss landscape
-        The surface plot is the best 3D visualization, but it uses the plotly dynamic interface, it
-        also has an overhead contour. For simple 2D plots which can be used as matplotlib graphics or
-        easily used in publications, use line and contour modes.
+        The surface plot is the best 3D visualization, but it uses the plotly dynamic interface,
+        it also has an overhead contour. For simple 2D plots which can be used as matplotlib
+        graphics or easily used in publications, use line and contour modes.
 
         :type mode: str
         :param mode: line, contour or surface, what type of plot do we want?
@@ -120,12 +126,15 @@ class LossLandscapePlotter:
         :param distance: the range around the current parameters that we need to sample to
         :returns: The figure object that has been generated
         :rtype: Plotly or matplotlib figure object
+        :raises NotImplementedError: For the 1D plotting. TODO Implement 1D plots.
 
-        Increasing the number of points improves the quality of the plot but takes a lot more time,
-        it scales quadratically in the number of points. Lowering the distance is a good idea if using
-        fewer points, since you get the same number of points for a small region. Note that these plots
-        can be deceptive, there might be large ridges that get missed due to lack of resolution of the
-        points, always be careful and try to use as many points as possible before making a final inference.
+        Increasing the number of points improves the quality of the plot but takes a
+        lot more time, it scales quadratically in the number of points. Lowering the
+        distance is a good idea if using fewer points, since you get the same number
+        of points for a small region. Note that these plots can be deceptive, there might
+        be large ridges that get missed due to lack of resolution of the points,
+        always be careful and try to use as many points as possible before making
+        a final inference.
         """
         assert mode in ["line", "contour", "surface"]
         if mode == "contour":

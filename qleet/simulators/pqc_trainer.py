@@ -1,4 +1,4 @@
-"""The module which houses the Parametrized Quantum Circuit trainer class. 
+"""The module which houses the Parametrized Quantum Circuit trainer class.
 
 It generates the TensorFlow Quantum model, and allows Keras like API to
 train and evaluate a model.
@@ -37,10 +37,14 @@ class PQCSimulatedTrainer:
         )
         self.circuit = circuit
 
-    def train(self, n_samples=100, loggers: typing.Optional[AnalyzerList] = None) -> tf.keras.Model:
+    def train(
+        self, n_samples=100, loggers: typing.Optional[AnalyzerList] = None
+    ) -> tf.keras.Model:
         """Trains the parameter of the circuit to minimize the loss.
         :type n_samples: int
         :param n_samples: Number of samples to train the circuit over
+        :type loggers: `AnalyzerList`
+        :param loggers: The AnalyzerList that tracks the training of the model
         :returns: The trained model
         :rtype: tf.keras.Model
         """

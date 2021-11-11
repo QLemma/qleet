@@ -1,4 +1,6 @@
-"""Implements an example of QAOA for Max Cut, and allows the user to analyze QAOA with no setup for any graph."""
+"""Implements an example of QAOA for Max Cut.
+Allows the user to analyze QAOA with easy setup.
+"""
 
 import itertools
 import typing

@@ -1,7 +1,7 @@
-"""This module houses the ways to specify a metric, and sample solutions to compute the value of the metric.
+"""This module houses the ways to specify a metric, and sample solutions to compute it's value.
 
-Metrics are a useful abstraction which given the state of the circuit compute some classical value which we need
-to interpret or plot.
+Metrics are a useful abstraction which given the state of the circuit compute some
+classical value which we need to interpret or plot.
 """
 
 import abc

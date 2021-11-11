@@ -1,8 +1,11 @@
 """This module houses the interfaces for analyzers, and provide a utility container AnalyzerList
 
-* MetaLogger is interface for those analyzers which need the state of the circuit at each timestep in training.
-* MetaExplorer is the interaface for those analyzers which can generate properties from a single snapshot of the circuit.
-* AnalyzerList is the convinience container which acts as a list of analyzers which easy to use API.
+* MetaLogger is interface for those analyzers which need the state of the
+    circuit at each timestep in training.
+* MetaExplorer is the interaface for those analyzers which can generate
+    properties from a single snapshot of the circuit.
+* AnalyzerList is the convinience container which acts as a list of analyzers
+    which easy to use API.
 """
 
 import typing
@@ -13,7 +16,9 @@ if typing.TYPE_CHECKING:
 
 
 class MetaLogger(ABC):
-    """Abstract class to represent interface of logging the present state of the model during training."""
+    """Abstract class to represent interface of logging.
+    Logs the present state of the model during training.
+    """
 
     def __init__(self):
         """Constructs the Logger object."""
@@ -23,9 +28,9 @@ class MetaLogger(ABC):
         self.item = []
 
     @abstractmethod
-    def log(self, solver: 'PQCSimulatedTrainer', loss: float):
+    def log(self, solver: "PQCSimulatedTrainer", loss: float):
         """Logs information at one timestep about either the solver or the present loss.
-        
+
         :type solver: PQCSimulatedTrainer
         :param solver: The state of the PQC trainer at the current timestep
         :type loss: float
@@ -45,20 +50,22 @@ class MetaLogger(ABC):
 
 
 class MetaExplorer(ABC):
-    """Abstract class to represent interface of analyzing a the current state of the circuit as a snapshot."""
+    """Abstract class to represent interface of analyzing a the current state of the circuit.
+    Treats the parameters of the circuit as a snapshot.
+    """
 
     def __init__(self):
         """Constructs the Explorer object."""
-        pass
 
 
 class AnalyzerList:
     """Container class, Stores a list of loggers.
-    
+
     All the loggers can be asked to log the information they need together.
-    The information to be logged can be provided to the Analyzer List in one convinient function call,
-    and all the associated functions for all the loggers get called which can accept that form of data.
-    All the loggers can also together be moved to the next model.
+    The information to be logged can be provided to the Analyzer List in one convinient
+    function call, and all the associated functions for all the loggers get called
+    which can accept that form of data. All the loggers can also together be moved to
+    the next model.
     """
 
     def __init__(self, *args: typing.Union[MetaLogger, MetaExplorer]):
@@ -74,7 +81,8 @@ class AnalyzerList:
 
     def log(self, solver: "PQCSimulatedTrainer", loss: float) -> None:
         """Logs the current state of model in all the loggers.
-        Does not ask the `MetaAnalyzers` to log the information since they don't implement the logging interface.
+        Does not ask the `MetaAnalyzers` to log the information since they don't
+        implement the logging interface.
         :type solver: PQCSimulatedTrainer
         :param solver: The PQC trainer whose parameters are to be logged
         :type loss: float
@@ -85,7 +93,8 @@ class AnalyzerList:
                 analyzer.log(solver, loss)
 
     def next(self) -> None:
-        """Moves the loggers to logging of the next model, completes that for the current training path."""
+        """Moves the loggers to logging of the next model.
+        Completes the logging for the current training path."""
         for analyzer in self._analyzers:
             if isinstance(analyzer, MetaLogger):
                 analyzer.next()
