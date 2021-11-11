@@ -11,17 +11,19 @@ from ..interface.circuit import CircuitDescriptor
 
 
 class PQCSimulatedTrainer:
+    """A class to train parametrized Quantum Circuits in Tensorflow Quantum
+    Uses gradient descent over the provided parameters, using the TFQ Adjoin differentiator.
+    """
+
     def __init__(self, circuit: CircuitDescriptor):
         self.optimizer = tf.keras.optimizers.Adam(lr=0.01)
+        self.pqc_layer = tfq.layers.PQC(
+            circuit.cirq_circuit,
+            circuit.cirq_cost,
+            differentiator=tfq.differentiators.Adjoint(),
+        )
         self.model = tf.keras.models.Sequential(
-            [
-                tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string),
-                tfq.layers.PQC(
-                    circuit.cirq_circuit,
-                    circuit.cirq_cost,
-                    differentiator=tfq.differentiators.Adjoint(),
-                ),
-            ]
+            [tf.keras.layers.Input(shape=(), dtype=tf.dtypes.string), self.pqc_layer]
         )
         self.circuit = circuit
 
