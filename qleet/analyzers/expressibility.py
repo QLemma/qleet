@@ -46,7 +46,20 @@ class Expressibility(MetaExplorer):
         self.circuit = circuit
 
         if noise_model is not None:
-            if isinstance(noise_model, NOISE_MODELS[circuit.default_backend]):
+            if (
+                (
+                    circuit.default_backend == "cirq"
+                    and isinstance(noise_model, cirqNoiseModel)
+                )
+                or (
+                    circuit.default_backend == "qiskit"
+                    and isinstance(noise_model, qiskitNoiseModel)
+                )
+                or (
+                    circuit.default_backend == "pyquil"
+                    and isinstance(noise_model, pyquilNoiseModel)
+                )
+            ):
                 self.noise_model = noise_model
             else:
                 raise ValueError(
