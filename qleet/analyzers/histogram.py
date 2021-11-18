@@ -9,6 +9,7 @@ well.
 """
 
 import typing
+import numpy as np
 
 import sympy
 from matplotlib import pyplot as plt
@@ -48,6 +49,8 @@ class ParameterHistograms(MetaExplorer):
 
         The parameter groups have associated group names which are the keys of the dictionary, we
         use them to label the plots.
+
+        TODO: Get the trainable model class as an input, convert this to a logger
         """
         super().__init__()
         self.circuit = circuit
@@ -82,9 +85,9 @@ class ParameterHistograms(MetaExplorer):
             for group_name, group_symbols in self.groups.items():
                 for model in self.models:
                     for variable in group_symbols:
-                        self._histograms[group_name][epochs_idx].append(
-                            self._get_symbol_value_from_model(model, variable)
-                        )
+                        value = self._get_symbol_value_from_model(model, variable)
+                        self._histograms[group_name][epochs_idx].append(value)
+                        print(f"{variable} in {epochs_idx}: {value}")
 
     @staticmethod
     def _get_symbol_value_from_model(
@@ -101,7 +104,7 @@ class ParameterHistograms(MetaExplorer):
         """
         return model.pqc_layer.symbol_values()[symbol]
 
-    def plot(self) -> plt.Axes:
+    def plot(self) -> np.ndarray:
         """Plot the parameter histogram for this circuit.
         The plots are layed out with the different epochs of training along one axis and
         the different parameter groups on the other. All the values of the same parameter

@@ -12,8 +12,9 @@ from qleet.analyzers.training_path import OptimizationPathPlotter
 from qleet.analyzers.loss_landscape import LossLandscapePlotter
 from qleet.analyzers.expressibility import Expressibility
 from qleet.analyzers.entanglement import EntanglementCapability
+from qleet.analyzers.histogram import ParameterHistograms
 
 from qleet.simulators.circuit_simulators import CircuitSimulator
 from qleet.simulators.pqc_trainer import PQCSimulatedTrainer
 
-from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut
+from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut, MaxCutMetric

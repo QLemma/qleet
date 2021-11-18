@@ -73,7 +73,7 @@ class LossLandscapePlotter:
             for other_axis in axes:
                 projection = np.dot(axis, other_axis)
                 axis = axis - projection * other_axis
-            axis = axis / np.sum(axis)
+            axis = axis / np.linalg.norm(axis)
             axes.append(axis)
         return np.stack(axes, axis=0)
 
