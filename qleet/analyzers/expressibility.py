@@ -166,8 +166,8 @@ class Expressibility(MetaExplorer):
 
     def plot(self, figsize=(6, 4), dpi=300, **kwargs):
         """Returns plot for expressibility visualization"""
-        if self.plot_data is None:
-            raise "Perform expressibility calculation first"
+        if not self.plot_data:
+            raise ValueError("Perform expressibility calculation first")
 
         haar_prob, pqc_prob, bin_edges = self.plot_data
         expr = self.expr

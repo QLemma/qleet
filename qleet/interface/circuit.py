@@ -64,7 +64,29 @@ def convert_to_qiskit(
     elif isinstance(circuit, qiskit.QuantumCircuit):
         return circuit
     elif isinstance(circuit, pyquil.Program):
-        raise convert_to_qiskit(convert_to_cirq(circuit))
+        return convert_to_qiskit(convert_to_cirq(circuit))
+    else:
+        raise ValueError(
+            f"Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}"
+        )
+
+
+def convert_to_pyquil(
+    circuit: typing.Union[qiskit.QuantumCircuit, cirq.Circuit, pyquil.Program]
+) -> qiskit.QuantumCircuit:
+    """Converts any circuit to pyquil
+    :type circuit: Circuit in any supported library
+    :param circuit: input circuit in any framework
+    :raises ValueError: if the circuit is not from one of the supported frameworks
+    :return: circuit in pyquil
+    :rtype: pyquil.Program
+    """
+    if isinstance(circuit, cirq.Circuit):
+        return pyquil.Program(circuit.to_quil())
+    elif isinstance(circuit, qiskit.QuantumCircuit):
+        return pyquil.Program(convert_to_cirq(circuit).to_quil())
+    elif isinstance(circuit, pyquil.Program):
+        return circuit
     else:
         raise ValueError(
             f"Expected a circuit object in cirq, qiskit or pyquil, got {type(circuit)}"
@@ -134,6 +156,7 @@ class CircuitDescriptor:
         cost_function: typing.Union[
             cirq.PauliSum, qiskit.quantum_info.PauliList, pyquil.paulis.PauliSum, None
         ],
+        backend: str = "cirq",
     ):
         """Generate the descriptor from OpenQASM string
 
@@ -143,12 +166,20 @@ class CircuitDescriptor:
         :param params: list of sympy symbols which act as parameters for the PQC
         :type cost_function: PauliSum
         :param cost_function: pauli-string operator to implement cost function
+        :type backend: str
+        :param backend: backend for the circuit descriptor objects
         :return: The CircuitDescriptor object
         :rtype: CircuitDescriptor
         """
-        cirq_circuit = circuit_from_qasm(qasm_str)
+        if backend == "cirq":
+            circuit = circuit_from_qasm(qasm_str)
+        elif backend == "qiskit":
+            circuit = qiskit.QuantumCircuit.from_qasm_str(qasm_str)
+        elif backend == "pyquil":
+            circuit = pyquil.Program(circuit_from_qasm(qasm_str).to_quil())
+
         return CircuitDescriptor(
-            circuit=cirq_circuit, params=params, cost_function=cost_function
+            circuit=circuit, params=params, cost_function=cost_function
         )
 
     @property
@@ -177,10 +208,18 @@ class CircuitDescriptor:
     @property
     def qiskit_circuit(self) -> qiskit.QuantumCircuit:
         """Get the circuit in qiskit
-        :return: the cirq representation of the circuit
+        :return: the qiskit representation of the circuit
         :rtype: qiskit.QuantumCircuit
         """
         return convert_to_qiskit(self._circuit)
+
+    @property
+    def pyquil_circuit(self) -> pyquil.Program:
+        """Get the circuit in pyquil
+        :return: the pyquil representation of the circuit
+        :rtype: pyquil.Program
+        """
+        return convert_to_pyquil(self._circuit)
 
     @property
     def num_qubits(self) -> int:
@@ -223,8 +262,7 @@ class CircuitDescriptor:
                 np.array_equal(self.parameters, other.parameters)
                 and self.cirq_circuit == other.cirq_circuit
             )
-        else:
-            return False
+        return False
 
     def __repr__(self) -> str:
         """Prints the representation of the CircuitDescriptor
