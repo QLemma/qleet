@@ -5,10 +5,12 @@
   <a href="https://qleet.readthedocs.io/en/latest/"><img alt="Read the Docs status" src="https://img.shields.io/readthedocs/qleet"></a>
   <!-- UnitaryFund Support -->
   <a href="http://unitary.fund"><img alt="Unitary Fund" src="https://img.shields.io/badge/Supported%20By-UNITARY%20FUND-brightgreen.svg?style=for-the-badge" width=175></a>
+  <!-- Codefactor -->
+  <a href="https://www.codefactor.io/repository/github/qlemma/qleet"><img src="https://www.codefactor.io/repository/github/qlemma/qleet/badge" alt="CodeFactor" />   </a>
   <!-- PyPI -->
-  <!--   <a href="https://pypi.org/project/qleet">
+  <a href="https://pypi.org/project/qLEET/">
     <img src="https://img.shields.io/pypi/v/qleet.svg?style=flat-square" />
-  </a> -->
+  </a>
   <!-- License -->
   <a href="https://www.apache.org/licenses/LICENSE-2.0">
     <img src="https://img.shields.io/github/license/QLemma/qleet" />
