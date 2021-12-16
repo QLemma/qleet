@@ -18,9 +18,10 @@ import plotly.graph_objects as pg
 
 from ..simulators.pqc_trainer import PQCSimulatedTrainer
 from ..interface.metric_spec import MetricSpecifier
+from ..interface.metas import MetaExplorer
 
 
-class LossLandscapePlotter:
+class LossLandscapePlotter(MetaExplorer):
     """This class plots the loss landscape for a given PQC trainer object.
 
     It can plot the true loss that we are training on or on some other metric, this can help
@@ -50,6 +51,7 @@ class LossLandscapePlotter:
         :param dim: The number of dimensions of the subspace to be sampled,
             necessarily 2 to get a contour plot
         """
+        super().__init__()
         self.n = len(solver.circuit.parameters)
         self.metric = metric
         self.solver = solver

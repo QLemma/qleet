@@ -265,12 +265,12 @@ def test_circuit_cost():
     with pytest.raises(
         NotImplementedError, match="Qiskit PauliString support is not implemented"
     ):
-        qiskit_descriptor.cirq_cost
+        assert qiskit_descriptor.cirq_cost is not None
 
     with pytest.raises(
         NotImplementedError, match="PyQuil PauliString support is not implemented"
     ):
-        pyquil_decriptor.cirq_cost
+        assert pyquil_decriptor.cirq_cost is not None
 
 
 def test_exceptions_circuit_descriptor():
@@ -278,25 +278,25 @@ def test_exceptions_circuit_descriptor():
     circuit_descriptor = qleet.interface.circuit.CircuitDescriptor(None, [], None)
 
     with pytest.raises(ValueError, match="Unsupported framework of circuit"):
-        circuit_descriptor.default_backend
+        assert circuit_descriptor.default_backend is not None
 
     with pytest.raises(
         ValueError, match="Expected a circuit object in cirq, qiskit or pyquil"
     ):
-        circuit_descriptor.qiskit_circuit
+        assert circuit_descriptor.qiskit_circuit is not None
 
     with pytest.raises(
         ValueError, match="Expected a circuit object in cirq, qiskit or pyquil"
     ):
-        circuit_descriptor.cirq_circuit
+        assert circuit_descriptor.cirq_circuit is not None
 
     with pytest.raises(
         ValueError, match="Expected a circuit object in cirq, qiskit or pyquil"
     ):
-        circuit_descriptor.pyquil_circuit
+        assert circuit_descriptor.pyquil_circuit is not None
 
     with pytest.raises(ValueError, match="Unsupported framework of circuit"):
-        circuit_descriptor.num_qubits
+        assert circuit_descriptor.num_qubits is not None
 
     with pytest.raises(ValueError, match="Cost object should be a Pauli-Sum object"):
-        circuit_descriptor.cirq_cost
+        assert circuit_descriptor.cirq_cost is not None
