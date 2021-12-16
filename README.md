@@ -2,18 +2,20 @@
   <!-- Continious Integration -->
   <a href="https://github.com/QLemma/qleet/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="GitHub Actions status" src="https://img.shields.io/github/workflow/status/QLemma/qleet/Continuous%20Integration/master?logo=github&style=flat-square"></a>
   <!-- Read the Docs status -->
-  <a href="https://qleet.readthedocs.io/en/latest/"><img alt="Read the Docs status" src="https://img.shields.io/readthedocs/qleet"></a>
+  <a href="https://qleet.readthedocs.io/en/latest/"><img alt="Read the Docs status" src="https://img.shields.io/readthedocs/qleet?style=flat-square"></a>
   <!-- UnitaryFund Support -->
   <a href="http://unitary.fund"><img alt="Unitary Fund" src="https://img.shields.io/badge/Supported%20By-UNITARY%20FUND-brightgreen.svg?style=for-the-badge" width=175></a>
+  <!-- Codecov -->
+  <a href="https://app.codecov.io/gh/QLemma/qleet"><img src="https://img.shields.io/codecov/c/github/QLemma/qleet?style=flat-square" alt="Codecov"/></a>
   <!-- Codefactor -->
-  <a href="https://www.codefactor.io/repository/github/qlemma/qleet"><img src="https://www.codefactor.io/repository/github/qlemma/qleet/badge" alt="CodeFactor" />   </a>
+  <a href="https://www.codefactor.io/repository/github/qlemma/qleet"><img src="https://www.codefactor.io/repository/github/qlemma/qleet/badge?style=flat-square" alt="CodeFactor" />   </a>
   <!-- PyPI -->
   <a href="https://pypi.org/project/qLEET/">
     <img src="https://img.shields.io/pypi/v/qleet.svg?style=flat-square" />
   </a>
   <!-- License -->
   <a href="https://www.apache.org/licenses/LICENSE-2.0">
-    <img src="https://img.shields.io/github/license/QLemma/qleet" />
+    <img src="https://img.shields.io/github/license/QLemma/qleet?style=flat-square" />
   </a>
 </p>
 
