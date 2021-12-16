@@ -52,8 +52,18 @@ def test_expressibility(params, noise_model, metric, samples):
             False,
             "Circuit and noise model must correspond to the same",
         ),
-        (qiskitNoiseModel(), "abc", False, "Invalid measure provided",),
-        (qiskitNoiseModel(), "jsd", True, "Perform expressibility calculation first",),
+        (
+            qiskitNoiseModel(),
+            "abc",
+            False,
+            "Invalid measure provided",
+        ),
+        (
+            qiskitNoiseModel(),
+            "jsd",
+            True,
+            "Perform expressibility calculation first",
+        ),
     ],
 )
 def test_exceptions_expressibility(noise_model, metric, plot, msg_match):
