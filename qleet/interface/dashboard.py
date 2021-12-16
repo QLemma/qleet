@@ -16,8 +16,7 @@ def launch_dashboard(trainer, plottable_metric):
     fig_loss_surface = plot.plot("surface", points=5)
 
     trackers = AnalyzerList(
-        LossLandscapePathPlotter(plot),
-        OptimizationPathPlotter(mode="tSNE"),
+        LossLandscapePathPlotter(plot), OptimizationPathPlotter(mode="tSNE"),
     )
     for _i in range(5):
         trainer.train(loggers=trackers)
@@ -35,12 +34,10 @@ def launch_dashboard(trainer, plottable_metric):
     fig_training_trace = trackers[1].plot()
 
     fig_loss_surface.layout.update(
-        height=800,
-        width=1200,
+        height=800, width=1200,
     )
     fig_loss_traversal.layout.update(
-        height=800,
-        width=1200,
+        height=800, width=1200,
     )
 
     app.layout = dash_html.Div(
@@ -52,15 +49,9 @@ def launch_dashboard(trainer, plottable_metric):
             dash_html.H2(children="tSNE of Optimization Path"),
             dash_core.Graph(id="training-path", figure=fig_training_trace),
             dash_html.H2(children="Loss Landscape along random 2-D subspace"),
-            dash_core.Graph(
-                id="loss-landscape",
-                figure=fig_loss_surface,
-            ),
+            dash_core.Graph(id="loss-landscape", figure=fig_loss_surface,),
             dash_html.H2(children="Traversal on the Loss Landscape above"),
-            dash_core.Graph(
-                id="loss-traversal",
-                figure=fig_loss_traversal,
-            ),
+            dash_core.Graph(id="loss-traversal", figure=fig_loss_traversal,),
         ],
     )
     app.run_server(debug=False)

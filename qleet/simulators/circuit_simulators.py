@@ -37,9 +37,7 @@ class CircuitSimulator:
         self._result = None
 
     @property
-    def result(
-        self,
-    ) -> typing.Optional[np.ndarray]:
+    def result(self,) -> typing.Optional[np.ndarray]:
         """Get the results stored from the circuit simulator
         :return: stored result of the circuit simulation if it has been performed, else None.
         :rtype: np.array or None

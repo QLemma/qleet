@@ -104,15 +104,11 @@ def test_qiskit_pyquil_conversion():
 def test_cirq_qiskit_conversion():
     """Tests circuit conversions for cirq and qiskit circuits"""
     cirq_descriptor = qleet.interface.circuit.CircuitDescriptor(
-        circuit=cirq_circuit,
-        params=[],
-        cost_function=None,
+        circuit=cirq_circuit, params=[], cost_function=None,
     )
 
     qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
-        circuit=qiskit_circuit,
-        params=[],
-        cost_function=None,
+        circuit=qiskit_circuit, params=[], cost_function=None,
     )
 
     print(

@@ -29,10 +29,8 @@ def test_entanglement(params, noise_model, metric, samples):
     qiskit_descriptor = qleet.interface.circuit.CircuitDescriptor(
         circuit=qiskit_circuit, params=params, cost_function=None
     )
-    qiskit_entanglement_capability = (
-        qleet.analyzers.entanglement.EntanglementCapability(
-            qiskit_descriptor, noise_model=noise_model, samples=samples
-        )
+    qiskit_entanglement_capability = qleet.analyzers.entanglement.EntanglementCapability(
+        qiskit_descriptor, noise_model=noise_model, samples=samples
     )
     entanglement = qiskit_entanglement_capability.entanglement_capability(metric)
     if not isinstance(entanglement, list):
@@ -49,11 +47,7 @@ def test_entanglement(params, noise_model, metric, samples):
             "meyer-wallach",
             "Circuit and noise model must correspond to the same",
         ),
-        (
-            qiskitNoiseModel(),
-            "abc",
-            "Invalid measure provided",
-        ),
+        (qiskitNoiseModel(), "abc", "Invalid measure provided",),
     ],
 )
 def test_exception_entanglement(noise_model, metric, msg_match):
@@ -69,9 +63,7 @@ def test_exception_entanglement(noise_model, metric, msg_match):
 
     with pytest.raises(ValueError, match=msg_match):
 
-        qiskit_entanglement_capability = (
-            qleet.analyzers.entanglement.EntanglementCapability(
-                qiskit_descriptor, noise_model=noise_model, samples=100
-            )
+        qiskit_entanglement_capability = qleet.analyzers.entanglement.EntanglementCapability(
+            qiskit_descriptor, noise_model=noise_model, samples=100
         )
         qiskit_entanglement_capability.entanglement_capability(metric)

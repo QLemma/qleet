@@ -18,3 +18,4 @@ from qleet.simulators.circuit_simulators import CircuitSimulator
 from qleet.simulators.pqc_trainer import PQCSimulatedTrainer
 
 from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut, MaxCutMetric
+from qleet._version import __version__
