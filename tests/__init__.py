@@ -1,17 +1,17 @@
-# # pylint: disable=import-outside-toplevel,too-many-arguments
+# pylint: disable=import-outside-toplevel,too-many-arguments
 
 
-# # determine if running in an interactive environment
-# from qleet.interface import dashboard
+# determine if running in an interactive environment
+from qleet.interface import dashboard
 
-# INTERACTIVE = False
+INTERACTIVE = False
 
-# try:
-#     dashboard.__file__
-# except AttributeError:
-#     INTERACTIVE = True
+try:
+    dashboard.__file__
+except AttributeError:
+    INTERACTIVE = True
 
 
-# def cli():
-#     """qLEET test command line interface"""
-#     return
+def cli():
+    """qLEET test command line interface"""
+    return

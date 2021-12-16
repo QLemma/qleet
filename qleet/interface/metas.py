@@ -77,7 +77,7 @@ class AnalyzerList:
         ] = typing.cast(typing.Tuple[typing.Union[MetaLogger, MetaExplorer]], args)
 
     def __str__(self) -> str:
-        return "\n".join(str(self._analyzers))
+        return "\n".join([str(analyzer) for analyzer in self._analyzers])
 
     def log(self, solver: "PQCSimulatedTrainer", loss: float) -> None:
         """Logs the current state of model in all the loggers.
@@ -113,4 +113,4 @@ class AnalyzerList:
         :retuns: List of all the Analyzers in the `AnalyzerList`.
         :rtype: `MetaLogger` or `MetaExplorer`
         """
-        return self._analyzers
+        return iter(self._analyzers)

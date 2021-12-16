@@ -98,6 +98,6 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
       - name: Coverage Test
-        run: coverage run --source qleet -m pytest tests/
+        run: coverage run --rcfile=tests/_config/.coveragerc --source qleet -m pytest tests/
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v1
