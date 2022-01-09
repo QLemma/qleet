@@ -5,8 +5,8 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "qleet"
 authors = [
-    {name = "Animesh Sinha", email = "animesh.sinha@research.iiit.ac.in"},
-    {name = "Utkarsh Azad", email = "utkarsh.azad@research.iiit.ac.in"}]
+    {name = "Utkarsh Azad", email = "utkarsh.azad@research.iiit.ac.in"},
+    {name = "Animesh Sinha", email = "animesh.sinha@research.iiit.ac.in"},]
 dynamic = ["version", "description"]
 
 [project.urls]
