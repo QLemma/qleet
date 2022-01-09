@@ -10,7 +10,7 @@ setup(
     name = "qleet",
     version = version,
     author = "Utkarsh Azad, Animesh Sinha",
-    author_email = "animeshsinha.1309@gmail.com, utkarshazad98@gmail.com",
+    author_email = "utkarshazad98@gmail.com, animeshsinha.1309@gmail.com",
     maintainer = "QLemma",
     maintainer_email = "utkarshazad98@gmail.com",
     url = "https://github.com/QLemma/qleet",
