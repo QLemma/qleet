@@ -60,7 +60,7 @@ python -m pip install qleet
 <p float="left">
 <img src="https://raw.githubusercontent.com/QLemma/qleet/master/images/expressibility.gif" alt="Expressibility" width=48% />
 
-<img src="https://raw.githubusercontent.com/QLemma/qleet/master/images/entanglement-spectrum" alt="Entanglement Spectrum" width=48% />
+<img src="https://raw.githubusercontent.com/QLemma/qleet/master/images/entanglement-spectrum.gif" alt="Entanglement Spectrum" width=48% />
 </p>
 
 ### Solving MAX-CUT using QAOA 
