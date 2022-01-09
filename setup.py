@@ -17,7 +17,7 @@ setup(
     py_modules=['qleet'],
     license = "Apache License 2.0",
     packages = find_packages(),
-    description = "qleet is an open-source library for exploring Loss landscape, Expressibility, Entangling"
+    description = "qLEET is an open-source library for exploring Loss landscape, Expressibility, Entangling"
                   "capability and Training trajectories of noisy parameterized quantum circuits.",
     long_description = open("README.md").read(),
     long_description_content_type = "text/markdown",
@@ -26,7 +26,7 @@ setup(
     package_data = {"qleet": ["tests/pytest.ini"]},
     include_package_data = True,
     classifiers = [
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: Apache Software License",
