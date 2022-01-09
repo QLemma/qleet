@@ -141,12 +141,11 @@ class CircuitDescriptor:
         """
         if isinstance(self._circuit, cirq.Circuit):
             return "cirq"
-        elif isinstance(self._circuit, qiskit.QuantumCircuit):
+        if isinstance(self._circuit, qiskit.QuantumCircuit):
             return "qiskit"
-        elif isinstance(self._circuit, pyquil.Program):
+        if isinstance(self._circuit, pyquil.Program):
             return "pyquil"
-        else:
-            raise ValueError("Unsupported framework of circuit")
+        raise ValueError("Unsupported framework of circuit")
 
     @classmethod
     def from_qasm(

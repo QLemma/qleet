@@ -100,7 +100,7 @@ class LossLandscapePlotter(MetaExplorer):
         ]
         coords = np.meshgrid(*chained_range)
         coords = np.reshape(np.stack(coords, axis=-1), (-1, self.dim))
-        values = np.zeros(len(coords), dtype=np.float)
+        values = np.zeros(len(coords), dtype=np.float64)
         with tqdm.trange(len(coords)) as iterator:
             iterator.set_description("Contour Plot Scan")
             for i in iterator:

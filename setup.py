@@ -6,7 +6,6 @@ with open("qleet/_version.py") as f:
 with open("requirements.txt") as f:
     requirements = list(map(lambda x: x.strip(), f.readlines()))
 
-
 setup(
     name = "qleet",
     version = version,
@@ -15,6 +14,7 @@ setup(
     maintainer = "QLemma",
     maintainer_email = "utkarshazad98@gmail.com",
     url = "https://github.com/QLemma/qleet",
+    py_modules=['qleet'],
     license = "Apache License 2.0",
     packages = find_packages(),
     description = "qleet is an open-source library for exploring Loss landscape, Expressibility, Entangling"

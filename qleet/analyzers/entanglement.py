@@ -1,4 +1,4 @@
-"""Module to test the achievable entanglement in circuits."""
+"""Module to evaluate the achievable entanglement in circuits."""
 
 import itertools
 import typing
