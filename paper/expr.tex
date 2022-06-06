@@ -1,0 +1,77 @@
+\documentclass[10pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, margin=1in,]{geometry}
+
+\usepackage{float}
+
+\usepackage{graphicx}% Include figure files
+
+\usepackage{enumitem}
+\usepackage{lipsum}  
+\usepackage{bm}% bold math
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=magenta
+}
+\usepackage{subcaption}
+% \captionsetup{justification = raggedright, singlelinecheck = true}
+              
+\begin{document}
+\begin{figure*}[htp]
+    \centering
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\linewidth]{expr/expr-hist-1.pdf}
+        \caption{$U(\vec{\theta}) = I $ \label{fig:error-chain}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\textwidth]{expr/expr-hist-2.pdf}
+        \caption{$U(\vec{\theta}) = H R_{Z} (
+        \theta_1)$ \label{fig:edge-graph}}
+    \end{subfigure}
+    %\vspace{2mm}\newline
+    % \begin{subfigure}[b]{0.45\linewidth}
+    % \centering
+    % \includegraphics[scale=0.7]{expr/expr-circ-1.pdf}\hfill
+    %     \caption{\label{fig:error-chain}}
+    % \end{subfigure}
+    % \hfill
+    % \begin{subfigure}[b]{0.45\linewidth}
+    %   \centering
+    %     \includegraphics[scale=0.7]{expr/expr-circ-2.pdf}
+    %     \hfill
+    %     \caption{\label{fig:edge-graph}}
+    % \end{subfigure}
+    \hfill
+    \vspace{2mm}\newline
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\textwidth]{expr/expr-hist-3.pdf}
+        \caption{$U(\vec{\theta}) = H R_{Z} (
+        \theta_1) R_{X} (\theta_2)$\label{fig:mwpm-surface}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\textwidth]{expr/expr-hist-4.pdf}
+        \caption{$U(\vec{\theta}) = H R_{Z} (
+        \theta_1) R_{X} (\theta_2) R_{Z}(\theta_3)$\label{fig:error-correction}}
+    \end{subfigure}%
+    %\vspace{2mm}\newline
+    % \begin{subfigure}[b]{0.45\linewidth}
+    %     \centering
+    %     \includegraphics[scale=0.7]{expr/expr-circ-3.pdf}
+    %     \hfill
+    %     \caption{\label{fig:mwpm-surface}}
+    % \end{subfigure}
+    % \hfill
+    % \begin{subfigure}[b]{0.45\linewidth}
+    % \centering
+    %     \includegraphics[scale=0.7]{expr/expr-circ-4.pdf}
+    %     \caption{\label{fig:error-correction}}
+    % \end{subfigure}
+    \hfill
+    %\caption{}
+    \label{fig:surface-code-error-correction-example}
+\end{figure*}
+\end{document}
+%
+% ****** End of file apssamp.tex ******
