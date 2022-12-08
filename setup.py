@@ -6,18 +6,18 @@ with open("qleet/_version.py") as f:
 with open("requirements.txt") as f:
     requirements = list(map(lambda x: x.strip(), f.readlines()))
 
-
 setup(
     name = "qleet",
     version = version,
     author = "Utkarsh Azad, Animesh Sinha",
-    author_email = "animeshsinha.1309@gmail.com, utkarshazad98@gmail.com",
+    author_email = "utkarshazad98@gmail.com, animeshsinha.1309@gmail.com",
     maintainer = "QLemma",
     maintainer_email = "utkarshazad98@gmail.com",
     url = "https://github.com/QLemma/qleet",
+    py_modules=['qleet'],
     license = "Apache License 2.0",
     packages = find_packages(),
-    description = "qleet is an open-source library for exploring Loss landscape, Expressibility, Entangling"
+    description = "qLEET is an open-source library for exploring Loss landscape, Expressibility, Entangling"
                   "capability and Training trajectories of noisy parameterized quantum circuits.",
     long_description = open("README.md").read(),
     long_description_content_type = "text/markdown",
@@ -26,7 +26,7 @@ setup(
     package_data = {"qleet": ["tests/pytest.ini"]},
     include_package_data = True,
     classifiers = [
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: Apache Software License",

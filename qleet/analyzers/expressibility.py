@@ -1,4 +1,4 @@
-"""Module to test the expressibility of circuits."""
+"""Module to evaluate the expressibility of circuits."""
 
 import itertools
 import typing

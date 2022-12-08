@@ -9,6 +9,9 @@ import typing
 import cirq
 import tqdm.auto as tqdm
 
+import warnings
+
+warnings.filterwarnings("ignore")
 import tensorflow as tf
 import tensorflow_quantum as tfq
 

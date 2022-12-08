@@ -22,7 +22,6 @@ import qiskit
 import pyquil
 
 from cirq.contrib.qasm_import import circuit_from_qasm
-from cirq.contrib.quil_import import circuit_from_quil
 import qiskit.quantum_info
 import pyquil.paulis
 
@@ -141,12 +140,11 @@ class CircuitDescriptor:
         """
         if isinstance(self._circuit, cirq.Circuit):
             return "cirq"
-        elif isinstance(self._circuit, qiskit.QuantumCircuit):
+        if isinstance(self._circuit, qiskit.QuantumCircuit):
             return "qiskit"
-        elif isinstance(self._circuit, pyquil.Program):
+        if isinstance(self._circuit, pyquil.Program):
             return "pyquil"
-        else:
-            raise ValueError("Unsupported framework of circuit")
+        raise ValueError("Unsupported framework of circuit")
 
     @classmethod
     def from_qasm(
@@ -177,6 +175,8 @@ class CircuitDescriptor:
             circuit = qiskit.QuantumCircuit.from_qasm_str(qasm_str)
         elif backend == "pyquil":
             circuit = pyquil.Program(circuit_from_qasm(qasm_str).to_quil())
+        else:
+            raise NotImplementedError()
 
         return CircuitDescriptor(
             circuit=circuit, params=params, cost_function=cost_function
