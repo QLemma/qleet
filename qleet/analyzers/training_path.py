@@ -61,7 +61,7 @@ class OptimizationPathPlotter(MetaLogger):
         self.item.append(self.counter)
         self.counter += 1
 
-    def plot(self) -> pg.Figure:
+    def plot(self, large_marker_size=5) -> pg.Figure:
         """Plots the 2D parameter projections.
         For the entire set of runs, the class has logged the parameter values.
         Now it reduces the dimensionality of those parameter vectors using PCA or tSNE
@@ -75,7 +75,7 @@ class OptimizationPathPlotter(MetaLogger):
             raw_params
         )
         max_number_of_runs = max(self.item)
-        size_values = [5 if size > max_number_of_runs - 5 else 1 for size in self.item]
+        size_values = [large_marker_size if size > max_number_of_runs - 5 else 1 for size in self.item]
         fig = px.scatter(
             x=final_params[:, 0],
             y=final_params[:, 1],
