@@ -5,18 +5,18 @@ train and evaluate a model.
 """
 
 import typing
+import warnings
 
 import cirq
 import tqdm.auto as tqdm
 
-import warnings
-
-warnings.filterwarnings("ignore")
 import tensorflow as tf
 import tensorflow_quantum as tfq
 
 from ..interface.metas import AnalyzerList
 from ..interface.circuit import CircuitDescriptor
+
+warnings.filterwarnings("ignore")
 
 
 class PQCSimulatedTrainer:

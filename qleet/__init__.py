@@ -1,8 +1,6 @@
 """The qLEET Package for visualizing quantum circuit behavior"""
 import os
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
 import qleet.examples
 import qleet.analyzers
 import qleet.simulators
@@ -23,3 +21,5 @@ from qleet.simulators.pqc_trainer import PQCSimulatedTrainer
 
 from qleet.examples.qaoa_maxcut import QAOACircuitMaxCut, MaxCutMetric
 from qleet._version import __version__
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

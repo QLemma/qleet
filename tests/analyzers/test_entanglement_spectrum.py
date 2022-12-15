@@ -16,7 +16,7 @@ import qleet
     "params",
     [[], [qiskit.circuit.Parameter(r"$θ_1$"), qiskit.circuit.Parameter(r"$θ_2$")]],
 )
-@pytest.mark.parametrize("tapered_indices", [[0], [1]])
+@pytest.mark.parametrize("tapered_indices", [(0,), (1,)])
 @pytest.mark.parametrize("noise_model", [None, qiskitNoiseModel()])
 @pytest.mark.parametrize("metric", ["kld", "jsd"])
 @pytest.mark.parametrize("samples", [50, 100])

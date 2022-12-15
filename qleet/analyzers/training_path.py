@@ -75,7 +75,10 @@ class OptimizationPathPlotter(MetaLogger):
             raw_params
         )
         max_number_of_runs = max(self.item)
-        size_values = [large_marker_size if size > max_number_of_runs - 5 else 1 for size in self.item]
+        size_values = [
+            large_marker_size if size > max_number_of_runs - 5 else 1
+            for size in self.item
+        ]
         fig = px.scatter(
             x=final_params[:, 0],
             y=final_params[:, 1],

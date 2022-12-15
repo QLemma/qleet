@@ -22,6 +22,7 @@ import qiskit
 import pyquil
 
 from cirq.contrib.qasm_import import circuit_from_qasm
+from cirq.contrib.quil_import import circuit_from_quil
 import qiskit.quantum_info
 import pyquil.paulis
 
@@ -168,7 +169,9 @@ class CircuitDescriptor:
         :param backend: backend for the circuit descriptor objects
         :return: The CircuitDescriptor object
         :rtype: CircuitDescriptor
+        :raises ValueError: if one of the 3 supported backends is not the input
         """
+        circuit: typing.Union[cirq.Circuit, qiskit.QuantumCircuit, pyquil.Program]
         if backend == "cirq":
             circuit = circuit_from_qasm(qasm_str)
         elif backend == "qiskit":
@@ -176,7 +179,7 @@ class CircuitDescriptor:
         elif backend == "pyquil":
             circuit = pyquil.Program(circuit_from_qasm(qasm_str).to_quil())
         else:
-            raise NotImplementedError()
+            raise ValueError()
 
         return CircuitDescriptor(
             circuit=circuit, params=params, cost_function=cost_function

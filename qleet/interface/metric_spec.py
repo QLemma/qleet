@@ -6,16 +6,17 @@ classical value which we need to interpret or plot.
 
 import abc
 import typing
+import warnings
 
 import numpy as np
 import sympy
-import warnings
 
-warnings.filterwarnings("ignore")
 import tensorflow_quantum as tfq
 import cirq
 
 from ..interface.circuit import CircuitDescriptor
+
+warnings.filterwarnings("ignore")
 
 
 class MetricSpecifier(abc.ABC):

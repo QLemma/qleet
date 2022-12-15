@@ -130,7 +130,7 @@ class EntanglementCapability(MetaExplorer):
             for idx in m
         ]
         combinations = [1 / comb(num_qubits, idx) for idx in m]
-        contributions = [2 ** idx / (2 ** idx - 1) for idx in m]
+        contributions = [2**idx / (2**idx - 1) for idx in m]
         ns = []
 
         for ind, perm in enumerate(permutations):

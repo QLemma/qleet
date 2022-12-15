@@ -1,13 +1,12 @@
 """Module to evaluate the entanglement spectrum of circuits."""
 
-import itertools
 import typing
 
 from qiskit.providers.aer.noise import NoiseModel as qiskitNoiseModel
 from cirq.devices.noise_model import NoiseModel as cirqNoiseModel
 from pyquil.noise import NoiseModel as pyquilNoiseModel
 
-from qiskit.quantum_info import state_fidelity, partial_trace
+from qiskit.quantum_info import partial_trace
 from scipy.spatial.distance import jensenshannon
 
 import matplotlib
@@ -36,7 +35,7 @@ class EntanglementSpectrum(MetaExplorer):
             cirqNoiseModel, qiskitNoiseModel, pyquilNoiseModel, None
         ] = None,
         samples: int = 1000,
-        tapered_indices: list = [],
+        tapered_indices: tuple = tuple(),
         cutoff: int = -30,
     ):
         """Constructor the the Expresssibility analyzer
@@ -87,7 +86,7 @@ class EntanglementSpectrum(MetaExplorer):
                 )
             self.tapered_indices = tapered_indices
         else:
-            self.tapered_indices = list(
+            self.tapered_indices = tuple(
                 range(self.circuit.num_qubits // 2, self.circuit.num_qubits)
             )
         self.eigvals_sample: typing.List[float] = []
@@ -154,13 +153,14 @@ class EntanglementSpectrum(MetaExplorer):
     def entanglement_spectrum(
         self, measure: str = "kld", shots: int = 1024
     ) -> typing.Tuple[float, np.ndarray]:
-        r"""Returns entanglement spectrum divergence (ESD) for the circuit against Marchenko-Pastur distribution
+        r"""Returns entanglement spectrum divergence (ESD) for the circuit against
+        Marchenko-Pastur distribution
 
         .. math::
             ESD = D_{KL}(\hat{P}_{PQC}(H_{\text{ent}}; \theta) | P_{Haar}(H_{\text{ent}}))\\
             ESD = D_{\sqrt{JSD}}(\hat{P}_{PQC}(H_{\text{ent}}; \theta) | P_{Haar}(H_{\text{ent}}))
 
-        :param measure: specification for the measure used in the entanglement spectrum divergence calculation
+        :param measure: specifies measure used in the entanglement spectrum divergence calculation
         :param shots: number of shots for circuit execution
         :returns pqc_esd: float, entanglement spectrum divergence value
         :raises ValueError: if invalid measure is specified

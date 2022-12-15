@@ -101,7 +101,7 @@ class Expressibility(MetaExplorer):
         """Returns probability density function of fidelities for Haar Random States"""
         fidelity = np.linspace(0, 1, self.num_samples)
         num_qubits = self.circuit.num_qubits
-        return (2 ** num_qubits - 1) * (1 - fidelity + 1e-8) ** (2 ** num_qubits - 2)
+        return (2**num_qubits - 1) * (1 - fidelity + 1e-8) ** (2**num_qubits - 2)
 
     def prob_pqc(self, shots: int = 1024) -> np.ndarray:
         """Return probability density function of fidelities for PQC
@@ -145,7 +145,7 @@ class Expressibility(MetaExplorer):
         if len(self.circuit.parameters) > 0:
             fidelity = self.prob_pqc(shots)
         else:
-            fidelity = np.ones(self.num_samples ** 2)
+            fidelity = np.ones(self.num_samples**2)
 
         bin_edges: np.ndarray
         pqc_hist, bin_edges = np.histogram(
