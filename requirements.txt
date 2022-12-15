@@ -2,7 +2,7 @@ cirq==0.13.1
 sympy==1.8
 tensorflow==2.7.0
 tensorflow-quantum==0.7.2
-numpy==1.23.5
+numpy>=1.19
 pandas==1.4.4
 tensorboard==2.11.0
 qiskit==0.30.0

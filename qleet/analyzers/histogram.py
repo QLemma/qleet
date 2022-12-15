@@ -130,5 +130,5 @@ class ParameterHistograms(MetaExplorer):
                     ax=ax[epoch_idx, group_idx],
                 )
                 ax[epoch_idx, group_idx].set_title(f"{group_name} @ epoch:{epoch_idx}")
-                ax[epoch_idx, group_idx].set_xlabel(f"Parameter Values")
+                ax[epoch_idx, group_idx].set_xlabel("Parameter Values")
         return ax
