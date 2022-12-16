@@ -1,0 +1,204 @@
+% LaTeX rebuttal letter example. 
+% 
+% Copyright 2019 Friedemann Zenke, zenkelab.org
+%
+% Based on examples by Dirk Eddelbuettel, Fran and others from 
+% https://tex.stackexchange.com/questions/2317/latex-style-or-macro-for-detailed-response-to-referee-report
+% 
+% Licensed under cc by-sa 3.0 with attribution required.
+
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum} % to generate some filler text
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=magenta
+}
+
+
+% package needed for optional arguments
+\usepackage{xifthen}
+% define counters for reviewers and their points
+\newcounter{reviewer}
+\setcounter{reviewer}{0}
+\newcounter{point}[reviewer]
+\setcounter{point}{0}
+
+% This refines the format of how the reviewer/point reference will appear.
+\renewcommand{\thepoint}{\arabic{point}} 
+
+% command declarations for reviewer points and our responses
+\newcommand{\reviewersection}{\stepcounter{reviewer} \bigskip \hrule
+                  \section*{Reviewer \thereviewer}}
+
+\newenvironment{point}
+   {\refstepcounter{point} \bigskip \noindent {\textbf{Comment~\thepoint} } ---\ }
+   {\par }
+
+\newcommand{\shortpoint}[1]{\refstepcounter{point}  \bigskip \noindent 
+	{\textbf{Comment~\thepoint} } ---~#1\par }
+
+\newenvironment{reply}
+   {\medskip \noindent \textbf{Response}:\  }
+   {\medskip}
+
+\newcommand{\shortreply}[2][]{\medskip \noindent \textbf{Response}:\  #2
+	\ifthenelse{\equal{#1}{}}{}{ \hfill \footnotesize (#1)}%
+	\medskip}
+
+\begin{document}
+
+\section*{Response to the Reviewers for QINP-D-22-00433}
+% General intro text goes here
+
+We thank the referees for their critical assessment of our work and for recommending the publication of our paper. We appreciate their comments and queries and have incorporated their suggestions in our revised manuscript.  We present an item-wise response to their comments below:
+
+% Let's start point-by-point with Reviewer 1
+%\reviewersection
+\bigskip \hrule
+\section*{Reviewer 2}
+
+% Point one description 
+\begin{point}
+    The authors used Haar measure in the paper without explain which the quantity it measures.
+\end{point}
+
+% Our reply
+\begin{reply}
+    Haar measure is used to sample unitaries $U$ uniformly from the Unitary group $\mathcal{U}$. These unitaries are then used to create the states $\rho$ mentioned in Eq. 4, which are then used to compute the fidelity distributions $P_{\text{Haar}}$ required for obtaining expressibility ($Expr$) values. We have modified subsection III.D to make this clear.
+\end{reply}
+
+\begin{point}
+    On page 8, the authors claimed that estimating the expectation value ⟨O⟩ with precision $\epsilon$ would be $O(1/\epsilon^2)$ without explain the prove or citing a reference.
+\end{point}
+
+\begin{reply}
+    We apologize for missing out on a reference for this. We have now referenced the article by Higgot et al., which discusses a straightforward proof for this in Sec. 8-A.
+    
+    [30] O. Higgott, D. Wang, and S. Brierley, \textit{Variational quantum computation of excited states}, \href{https://doi.org/10.22331/q-2019-07-01-156}{Quantum 3, 156}, (2019) 
+\end{reply}
+
+
+\begin{point}
+    Entangling Capability is one of significant qLEET, but the authors did not study the circuit that finds the solution of the quantum computing problems based the strength of entanglement. Thus, the authors have to add a new subsection that investigates the circuits in Refs(r1-r4) via qLEET.
+    \begin{itemize}
+        \item[r1.] Modern Physics Letters B 34 (35), 2050401, 2020
+        \item[r2.] Controlling remote robots based on zidan's quantum computing model," Computers, Materials \& Continua, vol. 73, no.3, pp. 6225-6236, 2022.
+        \item[r3.] Results in Physics 15, 102549, 2019
+        \item[r4.] Computers, Materials \& Continua 71 (1), 1065-1078, 2022
+    \end{itemize}
+\end{point}
+
+\begin{reply}
+	We have added a subsection in the supplementary investigating the main circuit component $M_Z$ operator, which is the core circuit element for the algorithms provided in the papers [r1-r4]. 
+\end{reply}
+
+
+\bigskip \hrule
+\section*{Reviewer 4}
+\setcounter{point}{0}
+
+\begin{point}
+     However, I do not see how the code can mitigate some challenges as the authors claimed. Providing the mitigation of the code could strengthen the paper. Furthermore, besides giving the analyzing tool, the code will be more valuable if it could provide a tool for designing an optimal parameterized quantum circuit. A revised manuscript must address these two points above.
+\end{point}
+
+\begin{reply}
+     We have added the codebase for various results presented in the main manuscript in the supplementary. Additionally, more updated and extensive tutorials, which also have examples for mitigation can be found on the project's GitHub\footnote{\url{https://github.com/QLemma/qleet}}.
+\end{reply}
+
+\begin{point}
+     In the abstract: "It supports quantum circuits and noise models built using popular quantum computing libraries such as Qiskit, Cirq, and Pyquil." This point does not show in any sections of the paper; it should state where and how these libraries are used in qLEET.
+\end{point}
+
+\begin{reply}
+    As mentioned in Section II.1, \texttt{CircuitDescriptor} object in the interface module allows one to use circuits built in any of these frameworks. This can now be seen more explicitly in the codes provided in the supplementary or in the live codebase\footnote{\url{https://github.com/QLemma/qleet/blob/master/tests/interface/test_circuit.py}}.
+\end{reply}
+
+\begin{point}
+     It is not clear how to use qLEET to calculate quantities and what is the advantage of qLEET in these calculations. The authors should provide some tutorial codes or pseudocodes. The tutorial codes are also helpful for the readers to replicate results in the paper and further use the code for their own studies.
+\end{point}
+
+\begin{reply}
+    As stated above, we have these codes in the supplementary and the same is also available at our project's GitHub.
+\end{reply}
+
+\begin{point}
+     In Fig. 1, the size of words should be larger. What are the arrows used for? What are the differences between those with "underline" and those without "underline"?
+\end{point}
+
+\begin{reply}
+    We have magnified the architecture image to make the words bigger. The arrow represents how each submodule interacts with each other (and with the top \texttt{qleet} module by default). The underlined texts represented the function methods provided by a submodule, whereas the non-underlined ones represented the class objects. This has been mentioned explicitly in the caption now. 
+\end{reply}
+
+\begin{point}
+     Fig. 3 and Fig. 8: The size of ticks, labels, and legends should be larger. \#1,.....,\#5 should clearly state.
+\end{point}
+
+\begin{reply}
+    We have updated the Figs. 3 and 8 to have more readable ticks, labels and legends. $\#1, \ldots, \#5$ represent the particular simulation instance for which the training trajectory is being presented. As mentioned in the caption of Fig. 3, we ran 5 instances of training the QAOA with different random initialization of parameters $\vec{\theta}$ in each case. Therefore, each legend label $\#k$ represents the training trajectory for k$^{th}$ training instance.
+\end{reply}
+
+\begin{point}
+     What is the definition of the training trajectory g($\theta$)? and also f($\theta$) in Fig. 3?
+\end{point}
+
+\begin{reply}
+    The $f(\theta)$ and $g(\theta)$ are arbitrary functions of parameters $\theta$ that are obtained from doing a dimensionality reduction (to two components) using t-SNE method. We now mention this in the caption for the figure.
+\end{reply}
+
+\begin{point}
+     In Figure 6., the label is "CX gates," but it is "CNOT gates" in the caption. They should be the same; change to "CNOT gates."
+\end{point}
+
+\begin{reply}
+    We have updated this, and now both the label and caption use the same terminology.  
+\end{reply}
+
+\begin{point}
+     Should include quantum circuits running in the paper to give a more apparent viewpoint.
+\end{point}
+
+\begin{reply}
+    We have now included the quantum circuits in the supplementary material. The following figures in the supplementary correspond to the circuits used in the respective sections:
+    \begin{itemize}
+        \item Loss Landscape and Training Trajectories: Fig. S3 - Fig. 3 
+        \item Expressibility: Fig. S4 - Fig. 5
+        \item Entangling Cability: Fig. S5 - Fig. 6
+        \item Entanglement Spectrum:
+        Fig. S6 - Fig. 7
+    \end{itemize}
+    We have further mentioned this in the main text for making readers aware of it. 
+\end{reply}
+
+\begin{point}
+     Missing citation for principal component analysis (PCA), t-SNE, and PHATE algorithms.
+\end{point}
+
+\begin{reply}
+    We apologize for the missing citations. We have now added them as listed below:
+
+    [22] I. T. Jolliffe and J. Cadima, \textit{Principal component analysis: a review and recent developments}, \href{https://doi.org/10.1098/rsta.2015.0202}{Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences 374, 20150202} (2016).
+    
+    [23] G. E. Hinton and S. Roweis, in \href{https://proceedings.neurips.cc/paper/2002/file/6150ccc6069bea6b5716254057a194ef-Paper.pdf}{Advances in Neural Information Processing Systems}, Vol. 15, edited by S. Becker, S. Thrun, and K. Obermayer (MIT Press, 2002).
+    
+    [24] K. R. Moon, D. van Dijk, Z. Wang, S. Gigante, D. B. Burkhardt, W. S. Chen, K. Yim, A. van den Elzen, M. J. Hirn, R. R. Coifman, N. B. Ivanova, G. Wolf, and S. Krishnaswamy, \textit{Visualizing structure and transitions in high-dimensional biological data}, \href{https://doi.org/10.1038/s41587-019-0336-3}{Nature Biotechnology 37}, 1482 (2019).
+\end{reply}
+
+\bigskip \hrule
+\section*{Reviewer 6}
+\setcounter{point}{0}
+
+\begin{point}
+     There are minor mistakes - typos, grammatical errors and misformatted equations, across the board that should be easy to correct.
+\end{point}
+
+\begin{reply}
+    We have proofread and corrected our manuscript for all such existing mistakes. 
+\end{reply}
+
+\end{document}

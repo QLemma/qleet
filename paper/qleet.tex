@@ -37,9 +37,9 @@
 
 \author{Utkarsh Azad}
 \email{utkarsh.azad@research.iiit.ac.in}
+\thanks{Corresponding Author}
 \author{Animesh Sinha}
 \email{animesh.sinha@research.iiit.ac.in}
-%   \email{laltu@iiit.ac.in}
 
 \affiliation{%
     Center for Computational Natural Sciences and Bioinformatics, International Institute of Information Technology, Hyderabad.\\
@@ -70,8 +70,8 @@ Therefore, it becomes imperative to design optimal PQCs for a given problem. How
 
 \begin{figure*}[!th]
     \centering
-    \includegraphics[width=0.61\linewidth]{images/qleet-architecture.pdf}
-    \caption{The architecture stack for qLEET}
+    \includegraphics[width=0.65\linewidth]{images/qleet-architecture.pdf}
+    \caption{The architecture stack for qLEET: Each block directed from qLEET represents a module. For the analyzers and simulators modules, each sub-block represents a submodule with class objects defined and used them (camel case) and function methods provided by them (underlined). For the interface module, each block represents the class objects defined in it (camel case header) and contains succinct description of their inputs and outputs.}
     \label{fig:qleet-architecture}
 \end{figure*}
 
@@ -115,7 +115,7 @@ We consider an N-qubit PQC $\hat{U}(\vec{\theta})$ with an objective function de
 \begin{equation}
 	\min \mathcal{C}(\vec{\theta}) = \min \text{Tr}[O \hat{U}(\vec{\theta}) \rho \hat{U}^{\dagger}(\vec{\theta})]
 \end{equation}
-A PQC $\hat{U}(\vec{\theta}$ evolves the input state $\rho$ to a parameterized target state $\rho(\vec{\theta})$ and to minimize $C(\vec{\theta})$ we update paramters $\vec{\theta}$ via some classical optimization routine such that:
+A PQC $\hat{U}(\vec{\theta})$ evolves the input state $\rho$ to a parameterized target state $\rho(\vec{\theta})$ and to minimize $C(\vec{\theta})$ we update paramters $\vec{\theta}$ via some classical optimization routine such that:
 \begin{equation}
 	\vec{\theta}_{k+1} = \vec{\theta}_k - \gamma f(\nabla_{\vec{\theta}})\ \mathcal{C}, \quad f(\textbf{0})= 0 
 \end{equation}
@@ -154,13 +154,20 @@ Therefore, for successfully training a PQC, we would require contributions from 
         \includegraphics[width=\textwidth]{images/training_trajectory_p3.pdf}
         \caption{Training trajectories for $p=8$\label{fig:train-p8}}
     \end{subfigure}%
-    \caption{Loss landscape and training trajectories plots for solving the MaxCut problem using QAOA routine implemented with qLEET for the graph presented in Fig. \ref{fig:qoao-maxcut-graph}. The training trajectories have been plotted for five instances of training with different random initializations of variational parameters $\vec{\theta}$ for each value of $p\in\{1, 4, 8\}$, where $p$ denotes the number of times QAOA ansatz is repeated.}
+    \caption{Loss landscape and training trajectories plots for solving the MaxCut problem using QAOA routine implemented with qLEET for the graph presented in Fig. \ref{fig:qoao-maxcut-graph}. The training trajectories have been plotted for five instances of training with different random initializations of variational parameters $\vec{\theta}$ for each value of $p\in\{1, 4, 8\}$, where $p$ denotes the number of times QAOA ansatz is repeated and functions $f(\vec{\theta})$ and $g(\vec{\theta})$ represented functions obtained after dimensionality reduction using t-SNE}
     \label{fig:loss-land-train-traj}
 \end{figure*}
 
 \subsection{Loss Landscape}
 
 Loss landscape is a visual representation of the loss values or the $\mathcal{C}(\vec{\theta})$ around the trainable variational parameter space of the PQC. This inspection is usually done around the optimal variational parameters $\vec{\theta}^{*}$ to identify features like local minima, ridges, and valleys present in the loss surface. Such analysis helps in analyzing smoothness off the surface, indicating the ease with which a gradient-based optimizer might be able to perform on it \citep{loss-landscapes}. 
+
+\begin{figure*}[!tp]
+    \centering
+    \includegraphics[width=0.82\textwidth]{images/expressibility.pdf}
+    \caption[Quantifying expressibility for single-qubit circuits]{Quantifying expressibility for single-qubit circuits. For each of the four circuits show here, 1000 sample pairs of circuit parameter vectors were uniformly drawn, corresponding to 2000 parameterized states. Histograms of estimated fidelities (orange) are shown, overlaid with fidelities of the Haar-distributed ensemble (blue), with the computed Kullback-Leibler (KL) divergence and Jensen-Shannon Distance (JSD) reported above the histograms.}
+    \label{fig:expressibility}
+\end{figure*}
 
 For example, in Fig. \ref{fig:loss-land-train-traj}, we look at the loss landscape associated with solving the MaxCut problem using the QAOA algorithm \cite{2014arXiv1411.4028F} for an Erdos-Renyi graph (Fig. \ref{fig:qoao-maxcut-graph}). We see that as the number of layers of QAOA ansatz, parameterized by $p$, are increased, the loss landscape becomes much smoother, and local minima pits disappear. Therefore, it would be much easier for a descent-based optimizer to traverse to global minima in case of higher $p$. This and similar loss landscape calculations in qLEET are done using the \texttt{loss\_landscape} function present in the analyzer module. As shown in Eq. \ref{eqn:loss-landscape-plot}, we compute the value of the loss function $\mathcal{L}$ for all the parameters in an orthonormalized 2-D subspace $S$ with basis vectors $\phi_i$ sampled from the whole trainable variational parameter space. 
 \begin{equation}\label{eqn:loss-landscape-plot}
@@ -176,14 +183,7 @@ We gather different information about the loss of landscape based on how we choo
 
 In many cases, just looking at the loss landscape for a given PQC model is not enough as we define the subspace $S$ using two of many possible directions as axes by taking linear combinations of variational parameters, while the loss landscape itself is highly nonlinear. Moreover, the high dimensionality of the parameter space makes the task of visualization of loss landscape extremely challenging. However, both of these difficulties can somewhat be alleviated by visualizing the loss landscape via the evolution of variational parameters of PQC during training in low dimensions. This evolution of variational parameters can be realized as the training trajectory for the PQC, and plotting them over several re-initializations helps us learn about the convergence properties of the PQCs and their optimization schedules. 
 
-\begin{figure*}[!tp]
-    \centering
-    \includegraphics[width=0.82\textwidth]{images/expressibility.pdf}
-    \caption[Quantifying expressibility for single-qubit circuits]{Quantifying expressibility for single-qubit circuits. For each of the four circuits show here, 1000 sample pairs of circuit parameter vectors were uniformly drawn, corresponding to 2000 parameterized states. Histograms of estimated fidelities (orange) are shown, overlaid with fidelities of the Haar-distributed ensemble (blue), with the computed Kullback-Leibler (KL) divergence and Jensen-Shannon Distance (JSD) reported above the histograms.}
-    \label{fig:expressibility}
-\end{figure*}
-
-In qLEET, training trajectories are calculated inside the analyzer module by the \texttt{training\_path} function. We use the entire set of variational parameters $\vec{\theta}^{t}$ to generate the trajectory over all re-initialization for every time step $t$ in the training process. We project the parameter vectors down to an orthonormalized 2-D subspace $S$ using techniques such as PCA, t-SNE, or PHATE. Similar to the case of loss landscape visualization, each of the mentioned techniques reveals different trajectory characteristics depending on its ability to preserve both global and local structures of higher-dimensional data in low dimensional subspace. Furthermore, the 2-D projections of the parameter trajectories can also be plotted on the loss surface, with the loss values as its third axis \citep{training-trajectories}.
+In qLEET, training trajectories are calculated inside the analyzer module by the \texttt{training\_path} function. We use the entire set of variational parameters $\vec{\theta}^{t}$ to generate the trajectory over all re-initialization for every time step $t$ in the training process. We project the parameter vectors down to an orthonormalized 2-D subspace $S$ using techniques such as PCA \cite{Jolliffe2016}, t-SNE \cite{NIPS2002_6150ccc6}, or PHATE \cite{Moon2019}. Similar to the case of loss landscape visualization, each of the mentioned techniques reveals different trajectory characteristics depending on its ability to preserve both global and local structures of higher-dimensional data in low dimensional subspace. Furthermore, the 2-D projections of the parameter trajectories can also be plotted on the loss surface, with the loss values as its third axis \citep{training-trajectories}.
 
 For example, we present the training trajectories with t-SNE projection in Fig. \ref{fig:loss-land-train-traj} for the same MaxCut problem that we discuss in the previous subsection about the loss landscape. We look at five different training instances for each $p$, where we begin with randomized initialization of variational parameters $\vec{\theta}$ every time. We see that for $p=1$ evolutions of $\vec{\theta}$ for every instance happen in their own respective clusters, suggesting the optimizer unsuccessfully gets stuck for different local minima every time. In contrast, for both $p=4$ and $p=8$, we see much lesser clusters formation and more intercrossing, hinting at certain parameters $\theta_k$ evolving to the same values while the optimizer reaches the global minima. 
 
@@ -196,21 +196,28 @@ For example, we present the training trajectories with t-SNE projection in Fig. 
 
 \subsection{Expressibility}
 
-We generate a distribution of state $\rho(\vec{\theta})$ for a PQC $\hat{U}(\vec{\theta})$ by randomly sampling over the variational parameter space. We quantify the deviation of this distribution from the one obtained from the maximally expressive Haar distribution as the \textit{Expressibility} of the given ansatz.
+We generate a distribution of states $\rho(\vec{\theta})$ for a PQC $\hat{U}(\vec{\theta})$ by randomly sampling over the variational parameter space. We quantify the deviation of this distribution from the one obtained from the maximally expressive Haar distribution as the \textit{Expressibility} of the given ansatz.
 \begin{equation}\label{qleet:eq3}
     A^{(t)} =\left\Vert \int_\text{Haar}\rho^{\otimes t} \text{d}\rho - \int_{\vec{\theta}}\rho(\vec{\theta})^{\otimes t} \text{d}\rho(\vec{\theta}) \right\Vert_\text{HS}^2\,
 \end{equation}
-where $\int_\text{Haar}\text{d}\rho$ denotes the integration over the states $\rho$ distributed according to the Haar measure, $t$ represent the $t^{\text{th}}$ moment,  and $\left\Vert A \right\Vert_\text{HS}^2$ is the Hilbert-Schmidt norm calculated as $\text{Tr}(A^\dagger A)$. We compute Eq. \ref{qleet:eq3} as the divergence between the state fidelities generated from the ensemble of uniformly sampled parameterized states $\rho(\vec{\theta})$ to that of the ensemble obtained from uniform Haar distribution \cite{10.1002/qute.201900070}.
+where $\int_\text{Haar}\text{d}\rho$ denotes the integration over the states $\rho$ distributed according to the Haar measure over the unitary group $\mathcal{U}$, $t$ represent the $t^{\text{th}}$ moment,  and $\left\Vert A \right\Vert_\text{HS}^2$ is the Hilbert-Schmidt norm calculated as $\text{Tr}(A^\dagger A)$. We compute Eq. \ref{qleet:eq3} as the divergence between the state fidelities $\mathcal{F}(\rho, \sigma) = \left(\text{Tr}\sqrt{\sqrt{\rho}\sigma\sqrt{\rho}} \right)^2$ \cite{Jozsa1994} generated from the ensemble of uniformly sampled parameterized states $\rho(\vec{\theta})$ to that of the ensemble obtained from uniform Haar distribution \cite{10.1002/qute.201900070}.
 \begin{equation}
-    \text{Expr} = D(\hat{P}_{PQC}(F; \vec{\theta}) | P_{Haar}(F))
+    \text{Expr} = D(\hat{P}_{PQC}(\mathcal{F}; \vec{\theta}) | P_{Haar}(\mathcal{F})), \quad \text{Expr} \geq 0
 \end{equation}
-According to this definition, a PQC $U(\vec{\theta})$ is more expressible if the distribution of state fidelities generated by the ansatz circuit $U(\vec{\theta})$ is closer to the one generated by the Haar measure. Therefore, the smaller the \textit{Expr} value, the more is the expressibility of the parameterized unitary. We see this in  Fig. \ref{fig:expressibility}, where we compare the fidelity distribution of PQC and Haar random states with respect to the number of Pauli rotation gates present in the single-qubit circuits and calculate the \textit{Expr} values for both Kullback-Leibler (KL) and Jensen-Shannon (JS) divergence. Furthermore, in Fig. \ref{fig:expressibility-measure}, we measure the increasing expressibility of the five qubit ansatz $U(\vec{\theta}) =  \prod_{1}^{L}\big(\bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3) \ldots \bigotimes_{i<j}CX(i, j)\big)$, where we see how expressibility increases with the number of layers $L$.  Finally, we note that, in addition to experiments like these, \texttt{expressibility} function in qLEET can also be used to predict the likelihood of whether the given PQC would be able to represent an unknown N-qubit target state and do a comparative analysis between different ansätze.
+According to this definition, a PQC $U(\vec{\theta})$ is more expressible if the distribution of state fidelities generated by the ansatz circuit $U(\vec{\theta})$ is closer to the one generated by the unitaries $U_{\text{Haar}}$ sampled uniformly from the unitary group $\mathcal{U}$. Therefore, the smaller the \textit{Expr} value, the more is the expressibility of the parameterized unitary. We see this in  Fig. \ref{fig:expressibility}, where we compare the fidelity distribution of PQC and Haar random states with respect to the number of Pauli rotation gates present in the single-qubit circuits and calculate the \textit{Expr} values for both Kullback-Leibler (KL) and Jensen-Shannon (JS) divergence. Furthermore, in Fig. \ref{fig:expressibility-measure}, we measure the increasing expressibility of the five qubit ansatz $U(\vec{\theta}) =  \prod_{1}^{L}\big(\bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3) \ldots \bigotimes_{i<j}CX(i, j)\big)$, where we see how expressibility increases with the number of layers $L$.  Finally, we note that, in addition to experiments like these, \texttt{expressibility} function in qLEET can also be used to predict the likelihood of whether the given PQC would be able to represent an unknown N-qubit target state and do a comparative analysis between different ansätze.
 
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/expressibility-measure.pdf}
     \caption[Visualizing entanglement spectrum for parameterized quantum circuits]{Measuring expressibility for the parameterized quantum circuit $U(\vec{\theta}) =  \prod_{1}^{L}\big(\bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3) \ldots \bigotimes_{i<j}CX(i, j)\big)$ using the Jensen-Shannon distance (JSD) measure as a function of number of layers $L$. }
     \label{fig:expressibility-measure}
+\end{figure}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\linewidth]{images/entanglement-capability.pdf}
+    \caption[Visualizing entanglement spectrum for parameterized quantum circuits]{Measuring entangling power for the parameterized quantum circuit $U(\theta)$ using the Mayer-Wallach measure as a function of the number of CX (or CNOT) gates appended to the circuit $U(\vec{\theta}) = \bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3)$.}
+    \label{fig:entanglement-capability}
 \end{figure}
 
 \subsection{Entangling Capability}
@@ -229,12 +236,7 @@ where $\rho_k$ is the density matrix for the state of the $k$-th qubit. In a sim
         m &= 1, \ldots, \lfloor n/2 \rfloor
     \end{split}
 \end{equation}
-\begin{figure}[!t]
-    \centering
-    \includegraphics[width=\linewidth]{images/entanglement-capability.pdf}
-    \caption[Visualizing entanglement spectrum for parameterized quantum circuits]{Measuring entangling power for the parameterized quantum circuit $U(\theta)$ using the Mayer-Wallach measure as a function of number of CNOT gates appended to the circuit $U(\vec{\theta}) = \bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3)$.}
-    \label{fig:entanglement-capability}
-\end{figure}
+
 In qLEET, we perform these calculations inside the $\texttt{entanglement}$ function in the analyzer module, where one can choose between both Meyer-Wallach and Scott measures for any PQC loaded as a $\texttt{CircuitDescriptor}$ object. For example, in Fig. \ref{fig:entanglement-capability}, we use it to plot the entangling capability of a five qubit circuit template $U(\vec{\theta}) = \bigotimes_{i=1}^{5}R_x(\theta_i^1)R_z(\theta_i^2)R_x(\theta_i^3)$ against the numbers of CNOT gates appended to circuit in a pair-wise fasion, i.e., CNOT$(i, j)$, where $i < j$ and $i,j <5$. We see that as the number of CNOT gates are increased, the entangling capability improves. We also notice a region of minimal increase between $[5, 7]$, which can be attributed to addition on qubits which were already transitive correlated.
 
 \subsection{Entanglement Spectrum}
@@ -257,12 +259,62 @@ In qLEET, \texttt{entanglement\_spectrum} function in the analyzers module can b
 \end{figure}
 
 
-\begin{figure}[ht]
+\begin{figure*}[t]
     \centering
-    \includegraphics[width=\linewidth]{images/barren-plateau.pdf}
-    \caption[Presence of barren plateaus in parameterized quantum circuits]{Here we show the emergence of barren plateaus in the task of learning an Identity gate using the ansatz $R_X(0,\theta_1)R_X(1, \theta_2)CZ(0, 1)$ solely based on the choice of the cost function. Figures (a) and (b) represents the loss landscape for the $\mathcal{C}_{Global}$ and local $\mathcal{C}_{Local}$ cost functions, respectively. Similarly, figures (c) and (d) represents coloured heat maps for their  corresponding gradients $\nabla_{\theta}\mathcal{C}_{\text{Global}}$ and $\nabla_{\theta}\mathcal{C}_{\text{Local}}$. We see that for $\mathcal{C}_{Global}$, the gradients vanish rapidly towards the boundaries of the loss landscape.}
+    \begin{subfigure}[b]{0.48\textwidth}
+    %\hspace{-20pt}
+    \begin{minipage}
+    {.03\textwidth}
+        \caption{}
+        \label{fig:barren-plateau-1}
+    \end{minipage}%
+    \begin{minipage}{0.90\textwidth}
+        \includegraphics[width=.9\textwidth]{images/global_cost_loss_landscape.pdf}
+    \end{minipage}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\linewidth}
+    %\hspace{-35pt}
+    \begin{minipage}{.08\textwidth}
+        \caption{}
+        \label{fig:barren-plateau-2}
+    \end{minipage}%
+    \begin{minipage}{0.9\textwidth}
+        \includegraphics[width=0.9\textwidth]{images/local_cost_loss_landscape.pdf}
+    \end{minipage}
+    \end{subfigure}\\
+    \begin{subfigure}[b]{0.48\linewidth}
+    %\hspace{-20pt}
+    \begin{minipage}
+    {.03\textwidth}
+        \caption{}
+        \label{fig:barren-plateau-3}
+    \end{minipage}%
+    \begin{minipage}{0.90\textwidth}
+        \includegraphics[width=.9\linewidth]{images/Global_cost_grad_landscape.pdf}
+    \end{minipage}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+    %\hspace{-35pt}
+    \begin{minipage}{.08\textwidth}
+        \caption{}
+        \label{fig:barren-plateau-4}
+    \end{minipage}%
+    \begin{minipage}{0.9\textwidth}
+        \includegraphics[width=0.9\textwidth]{images/Local_cost_grad_landscape.pdf}
+    \end{minipage}
+    \end{subfigure}
+    %\hspace{40pt}
+    \caption[Presence of barren plateaus in parameterized quantum circuits]{Here we show the emergence of barren plateaus in the task of learning an Identity gate using the ansatz $R_X(0,\theta_1)R_X(1, \theta_2)CZ(0, 1)$ solely based on the choice of the cost function. Figures (a) and (b) represents the loss landscape for the $\mathcal{C}_{Global}$ and local $\mathcal{C}_{Local}$ cost functions, respectively. Similarly, figures (c) and (d) represents coloured heat maps for their  corresponding gradients $\nabla_{\theta_2}\mathcal{C}_{\text{Global}}$ and $\nabla_{\theta_2}\mathcal{C}_{\text{Local}}$} 
+    %We see that for $\mathcal{C}_{Global}$, the gradients vanish rapidly towards the boundaries of the loss landscape.}
     \label{fig:barren-plateau}
-\end{figure}
+\end{figure*}
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=\linewidth]{images/barren-plateau.pdf}
+%     \caption[Presence of barren plateaus in parameterized quantum circuits]{Here we show the emergence of barren plateaus in the task of learning an Identity gate using the ansatz $R_X(0,\theta_1)R_X(1, \theta_2)CZ(0, 1)$ solely based on the choice of the cost function. Figures (a) and (b) represents the loss landscape for the $\mathcal{C}_{Global}$ and local $\mathcal{C}_{Local}$ cost functions, respectively. Similarly, figures (c) and (d) represents coloured heat maps for their  corresponding gradients $\nabla_{\theta}\mathcal{C}_{\text{Global}}$ and $\nabla_{\theta}\mathcal{C}_{\text{Local}}$. We see that for $\mathcal{C}_{Global}$, the gradients vanish rapidly towards the boundaries of the loss landscape.}
+%     \label{fig:barren-plateau}
+% \end{figure}
 
 
 \subsection{Parameter Histograms}
@@ -285,17 +337,16 @@ In this section, we will discuss some key challenges that we come across in vari
 
 The quantum hardware that exists today are imperfect, as a result of which a computation being run on them may suffer various kinds of errors \cite{Chaudhary2022-kl}. Therefore, in order to realistically simulate and characterize the performance of a parameterized quantum circuit (PQC), we must include these errors in our computation. Our library does so by using noise models from libraries such as Cirq and Qiskit, which provides for errors related to coherent gate errors, incoherent errors, and state preparation and measurement (SPAM) errors. Users can provide the \texttt{NoiseModel} to the \texttt{CircuitSimulator} function in the simulator module while running the experiments. 
 
-Another source of error in the quantum computation arises from the limited number of times the circuit is repeatedly executed for sampling. This restricts the precision with which one can compute the Pauli observable $\hat{O}$ for calculating the cost function $\mathcal{C}$ as the number of measurements $m$ required for estimating the expectation value $\langle\hat{O}\rangle$ with precision $\epsilon$ would be $O(1/\epsilon^2)$. In qLEET, the default value of the number of repetitions is $1024$ and is determined by the \texttt{shots} variable, which can be provided at the time of calling any analysis function from the analyzer module.
+Another source of error in quantum computation arises from the limited number of times the circuit is repeatedly executed for sampling. This restricts the precision with which one can compute the Pauli observable $\hat{O}$ for calculating the cost function $\mathcal{C}$ as the number of measurements $m$ required for estimating the expectation value $\langle\hat{O}\rangle$ with precision $\epsilon$ would be $O(1/\epsilon^2)$ \cite{Higgott2019variationalquantum}. In qLEET, the default value of the number of repetitions is $1024$ and is determined by the \texttt{shots} variable, which can be provided at the time of calling any analysis function from the analyzer module.
 
+\vspace{-2pt}
 
 \subsection{Presence of Barren Plateaus}
 
 The main crux of the discussion presented in the previous section is that the choice of ansatz and the cost function together is crucial for successfully training a PQC for a given task. One of the critical hindrances for the training to go as expected is the barren plateau (BP) phenomenon, where the partial derivatives $\partial_{\theta_k}\mathcal{C}(\vec{\theta})$ of the cost function $\mathcal{C}(\vec{\theta})$ with respect to variational parameters $\theta_k$ will, on average, exponentially vanish (Eq. \ref{eq:barren-plateau}). This leads to the flattening of the loss landscape, traversing through, which would require an exponentially large number of shots (for more precision) against finite sampling noise to determine the direction that minimizes the cost. Moreover, it was recently shown in \cite{2020arXiv200714384W} that BPs can also be induced due to noise present in the quantum hardware. This could be a significant issue since it could erase the potential computation advantage associated with quantum computation due to the exponential scaling required to attain the necessary precision, making the complexity comparable to classical algorithms.
-
 \begin{equation}\label{eq:barren-plateau}
 	\text{Var}_{\vec{\theta}}[\partial_{\theta_k}\mathcal{C}(\vec{\theta})] \in O\left(\frac{1}{m^N}\right),\quad \text{for}\ m > 1
 \end{equation}
-
 In qLEET, one can potentially visualize the BP phenomena by visualizing the loss landscape for a chosen PQC and cost function. This could allow users to see if BP can be mitigated by tweaking either the structure of PQC itself or just the cost function. For example, in Fig. \ref{fig:barren-plateau}, we show an example of BP dependent on the cost function in a shallow ansatz \cite{s41467-021-21728-w}. Here we compare global $\mathcal{C}_{\text{Global}}$ and local $\mathcal{C}_{\text{Local}}$ cost functions for learning the Identity gate using a very simple ansatz: $R_X(0,\theta_1)R_X(1, \theta_2)CZ(0, 1)$. 
 \begin{equation}
 \begin{split}
@@ -322,6 +373,9 @@ where the first and second term is the minimum over all states $\ket{\psi}$ samp
 \section{\label{sec:conclusion}Conclusion}
 
 This paper presents an open-source library called qLEET and demonstrates its ability to analyze various properties of parameterized quantum circuits (PQCs), such as their expressibility and entangling power. We motivate the importance of studying these properties from the problem of trainability of PQCs. We have discussed and showed how important insights could be gained from visualizing loss landscapes and training trajectories for variational quantum computation. We also present the theory of expressibility and entangling capability of a PQC based on the deviation of the distribution of parameterized states produced from the Haar measure, which samples uniformly from the entire Hilbert space. We also describe the idea of the entanglement spectrum, which allows visualizing the previous two properties at once. Overall, we demonstrate how different modules included in \texttt{qleet} can be used by users to study various variational algorithms and quantum machine learning models. Finally, we discuss some critical challenges for variational quantum algorithms such as Barren Plateaus and Reachability. We conclude that qLEET will provide opportunities for the quantum community to design new hybrid algorithms by utilizing intuitive insights from the ansatz capability and structure of the loss landscape.
+
+\section*{Data Availability}
+The code created to run the presented simulations and any related supplementary data could be made available to any reader upon reasonable request.
 
 \section*{Acknowledgements}
 We acknowledge the help and financial support of the Unitary Fund for this project. We also acknowledge Prof. Harjinder Singh for the fruitful discussions we had with him throughout the development of this library.
