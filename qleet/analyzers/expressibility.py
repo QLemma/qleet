@@ -164,6 +164,66 @@ class Expressibility(MetaExplorer):
 
         return pqc_expressibility
 
+    def compare_expressibility(self, circuit: typing.Union(CircuitDescriptor, typing.List), measure: str = "kld", shots: int = 1024) -> float:
+        r"""Compares expressibility against the provided circuit
+
+        .. math::
+            Expr = D_{KL}(\hat{P}_{PQC_1}(F; \theta) | \hat{P}_{PQC_2}(F; \theta))\\
+            Expr = D_{\sqrt{JSD}}(\hat{P}_{PQC_1}(F; \theta) | \hat{P}_{PQC_2}(F; \theta))
+
+        :param measure: specification for the measure used in the expressibility calculation
+        :param shots: number of shots for circuit execution
+        :returns pqc_expressibility: float, expressibility value
+        :raises ValueError: if invalid measure is specified
+        """
+
+        thetas, phis = self.gen_params()
+        fidelities = []
+        pqc_probs = []
+
+        if not isinstance(circuit, list) and isinstance(circuit, CircuitDescriptor):
+            circuit = [circuit]
+
+        for circ in [*circuit, self.circuit]:
+
+            if len(circuit.parameters) > 0:
+                theta_circuits = [
+                    CircuitSimulator(circ, self.noise_model).simulate(theta, shots)
+                    for theta in thetas
+                ]
+                phi_circuits = [
+                    CircuitSimulator(circ, self.noise_model).simulate(phi, shots)
+                    for phi in phis
+                ]
+                fidelity = np.array(
+                    [
+                        state_fidelity(rho_a, rho_b)
+                        for rho_a, rho_b in itertools.product(theta_circuits, phi_circuits)
+                    ]
+                )
+            else:
+                fidelity = np.ones(self.num_samples**2)
+            
+            fidelities.append(fidelity)
+            bin_edges: np.ndarray
+            pqc_hist, bin_edges = np.histogram(
+                fidelity, self.num_samples, range=(0, 1), density=True
+            )
+            pqc_prob: np.ndarray = pqc_hist / float(pqc_hist.sum())
+            pqc_probs.append(pqc_probs)
+
+        pqc_expressibilities = []
+        for pqc_prob in pqc_probs[:-1]:
+            if measure == "kld":
+                pqc_expressibility = self.kl_divergence(pqc_prob, pqc_probs[-1])
+            elif measure == "jsd":
+                pqc_expressibility = jensenshannon(pqc_prob, pqc_probs[-1], 2.0)
+            else:
+                raise ValueError("Invalid measure provided, choose from 'kld' or 'jsd'")
+            pqc_expressibilities.appned(pqc_expressibility)
+
+        return pqc_expressibilities
+
     def plot(self, figsize=(6, 4), dpi=300, **kwargs):
         """Returns plot for expressibility visualization"""
         if not self.plot_data:
