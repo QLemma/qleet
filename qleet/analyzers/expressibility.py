@@ -164,7 +164,7 @@ class Expressibility(MetaExplorer):
 
         return pqc_expressibility
 
-    def compare_expressibility(self, circuit: typing.Union(CircuitDescriptor, typing.List), measure: str = "kld", shots: int = 1024) -> float:
+    def compare_expressibility(self, circuit: typing.Union(CircuitDescriptor, typing.List[CircuitDescriptor]), measure: str = "kld", shots: int = 1024) -> typing.List[float]:
         r"""Compares expressibility against the provided circuit
 
         .. math::
